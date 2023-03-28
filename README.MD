@@ -15,6 +15,12 @@ installs expo-cli, allows the app to interface with the ExpoGo application
 ```bash
 npm install expo-cli
 ```   
+install react navigation - allows our application to navigate to different screens 
+```bash
+npm install @react-navigation/native @react-navigation/native-stack
+npx expo install react-native-screens react-native-safe-area-context
+``` 
+
 ## (Follow instructions only for developers running on a public network!)
 installs expo tunnel capabilities
 ```bash
