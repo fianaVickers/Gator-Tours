@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
+import MapView from 'react-native-maps';
 
 // You can import from local files
 import AssetExample from './components/AssetExample';
@@ -12,10 +13,10 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.paragraph}>
-          Welcome to the first Gator Tour multi-platform application!
-      
+          Welcome to the first Gator Tour multi-platform application!  
       </Text>
-      <AssetExample />
+            <MapView camera={{center:{latitude: 29.64534706758316, longitude: -82.3549303777473}, altitude: 10000 }} style={{height: '50%', width: '100%'}}/>
+      {/* <AssetExample /> */}
     </View>
   );
 }
