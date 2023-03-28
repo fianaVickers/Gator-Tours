@@ -1,38 +1,108 @@
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
-import MapView from 'react-native-maps';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Fontisto } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons'; 
 
 // You can import from local files
 import AssetExample from './components/AssetExample';
+import MapComp from './components/Map';
+import TourList from './components/TourList';
+import ChatBox from './components/AlliChat';
+import DetailsScreen from './components/Detail';
+
 
 // or any pure javascript modules available in npm
 //import { Card } from 'react-native-paper';
 
-export default function App() {
+const MapStack = createStackNavigator();
+function MapStackScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.paragraph}>
-          Welcome to the first Gator Tour multi-platform application!  
-      </Text>
-            <MapView camera={{center:{latitude: 29.64534706758316, longitude: -82.3549303777473}, altitude: 10000 }} style={{height: '50%', width: '100%'}}/>
-      {/* <AssetExample /> */}
-    </View>
+    <MapStack.Navigator>
+     <MapStack.Screen name="Map" component={MapComp} />            
+     <MapStack.Screen name="Details" component={DetailsScreen} />
+    </MapStack.Navigator>
+   );
+ }
+
+const ChatStack = createStackNavigator();
+function ChatStackScreen() {
+  return (
+    <ChatStack.Navigator>
+     <ChatStack.Screen name="Alli-Gator Chatbot" component={ChatBox} />            
+     <ChatStack.Screen name="Details" component={DetailsScreen} />
+    </ChatStack.Navigator>
+   );
+ }
+
+const TourStack = createStackNavigator();
+function TourStackScreen() {
+  return (
+    <TourStack.Navigator>
+     <TourStack.Screen name="Tour Selection" component={TourList} />            
+     <TourStack.Screen name="Details" component={DetailsScreen} />
+    </TourStack.Navigator>
+   );
+ }
+
+const Tour = createStackNavigator();
+
+const Tab = createMaterialBottomTabNavigator();
+
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Map"
+      activeColor="#ffffff"
+      labelStyle={{ fontSize: 12 }}
+      style={{ backgroundColor: 'black' }}
+    >
+      <Tab.Screen
+        name="MapNest"
+        component={MapStackScreen}
+        options={{
+          tabBarLabel: 'Map Display',
+          tabBarIcon: ({ color }) => (
+            <Fontisto name="map" size={22} color="white" />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Alli ChatBot Tab"
+        component={ChatStackScreen}
+        options={{
+          tabBarLabel: 'Alli ChatBot',
+          tabBarIcon: ({ color }) => (
+            <Entypo name="chat" size={24} color="white" />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Tours"
+        component={TourStackScreen}
+        options={{
+          tabBarLabel: 'Tours',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="map-signs" size={24} color="white" />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
-    padding: 8,
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+       <MyTabs />
+    </NavigationContainer>
+
+  );
+}
+
+

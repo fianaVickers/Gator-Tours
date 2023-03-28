@@ -11,35 +11,50 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingBottom: 2,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     backgroundColor: 'rgba(247,247,247,1.0)',
   },
   item: {
-    padding: 10,
+    padding: 15,
     fontSize: 18,
-    height: 44,
+    height: 60,
   },
 });
 
-const SectionListBasics = () => {
+const TourList = () => {
   return (
     <View style={styles.container}>
       <SectionList
         sections={[
-          {title: 'D', data: ['Devin', 'Dan', 'Dominic']},
+          {title: 'Tour by Major',
+           data: [
+            'Computer Engineering',
+            'Business Administration',
+            'Zoology',
+            'Major1',
+            'Major2',
+            'Major3',
+            'Major4',]
+          },
           {
-            title: 'J',
+            title: 'Tour by Landmarks',
             data: [
-              'Jackson',
-              'James',
-              'Jillian',
-              'Jimmy',
-              'Joel',
-              'John',
-              'Julie',
+              'Garden 1',
+              'Path 2',
+              'Butterfly Lane',
+              'Birds and Bees route',
             ],
           },
+          {
+            title: 'Custom Tour',
+            data: [
+              'Saved Tour 1',
+              'Saved Tour 2',
+              'Saved Tour 3',
+            ],
+          },
+
         ]}
         renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
         renderSectionHeader={({section}) => (
@@ -51,4 +66,4 @@ const SectionListBasics = () => {
   );
 };
 
-export default SectionListBasics;
+export default TourList;
