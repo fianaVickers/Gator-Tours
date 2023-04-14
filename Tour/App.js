@@ -15,7 +15,7 @@ import MapComp from './components/Map';
 import TourList from './components/TourList';
 import ChatBox from './components/AlliChat';
 import DetailsScreen from './components/Detail';
-
+import newChatUI from './components/chatUI';
 
 // or any pure javascript modules available in npm
 //import { Card } from 'react-native-paper';
@@ -34,7 +34,7 @@ const ChatStack = createStackNavigator();
 function ChatStackScreen() {
   return (
     <ChatStack.Navigator>
-     <ChatStack.Screen name="Alli-Gator Chatbot" component={ChatBox} />            
+     <ChatStack.Screen name="Alli-Gator Chatbot" component={newChatUI} />            
      <ChatStack.Screen name="Details" component={DetailsScreen} />
     </ChatStack.Navigator>
    );

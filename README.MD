@@ -21,6 +21,7 @@ install react navigation - allows our application to navigate to different scree
 npm install @react-navigation/native @react-navigation/native-stack
 npx expo install react-native-screens react-native-safe-area-context
 npm install @react-navigation/material-bottom-tabs react-native-paper react-native-vector-icons
+npm install react-native-gifted-chat
 ``` 
 
 ## (Follow instructions only for developers running on a public network!)
