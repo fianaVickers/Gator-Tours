@@ -8,6 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
+//require('dotenv').config();
 
 // You can import from local files
 import AssetExample from './components/AssetExample';
@@ -15,7 +16,7 @@ import MapComp from './components/Map';
 import TourList from './components/TourList';
 import ChatBox from './components/AlliChat';
 import DetailsScreen from './components/Detail';
-import newChatUI from './components/chatUI';
+
 
 // or any pure javascript modules available in npm
 //import { Card } from 'react-native-paper';
@@ -34,7 +35,7 @@ const ChatStack = createStackNavigator();
 function ChatStackScreen() {
   return (
     <ChatStack.Navigator>
-     <ChatStack.Screen name="Alli-Gator Chatbot" component={newChatUI} />            
+     <ChatStack.Screen name="Alli-Gator Chatbot" component={ChatBox} />            
      <ChatStack.Screen name="Details" component={DetailsScreen} />
     </ChatStack.Navigator>
    );
