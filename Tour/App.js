@@ -14,7 +14,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import AssetExample from './components/AssetExample';
 import MapComp from './components/Map';
 import TourList from './components/TourList';
-import ChatBox from './components/AlliChat';
+import RoomScreen from './components/chatUI';
 import DetailsScreen from './components/Detail';
 
 
@@ -35,7 +35,7 @@ const ChatStack = createStackNavigator();
 function ChatStackScreen() {
   return (
     <ChatStack.Navigator>
-     <ChatStack.Screen name="Alli-Gator Chatbot" component={ChatBox} />            
+     <ChatStack.Screen name="Alli-Gator Chatbot" component={RoomScreen} />            
      <ChatStack.Screen name="Details" component={DetailsScreen} />
     </ChatStack.Navigator>
    );
