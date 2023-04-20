@@ -2,7 +2,7 @@
 # Gator Tour Development Environment set up for WSL UBUNTU
 (The following steps only work for WSL Ubuntu Development Environments!)
 [Skip to Pre Alpha Documentation!](#prealpha-documentation)
-[Skip to Prototype Documentation!](#prealpha-documentation)
+[Skip to Prototype Documentation!](#prototype-documentation)
 ## Download and Install the appropriate dependencies for React Native
 installs the npm package manager
 ```bash
