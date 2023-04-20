@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Avatar, GiftedChat } from 'react-native-gifted-chat';
 
 export default function RoomScreen() {
@@ -26,16 +26,35 @@ export default function RoomScreen() {
     }
   ]);
 
-  // helper method that is sends a message
-  function handleSend(newMessage = []) {
-    setMessages(GiftedChat.append(messages, newMessage));
-  }
+  const messageTemp = {
+    _id: Math.floor(Math.random() * 100),
+    text: "Hmm... let me think about that",
+    createdAt: new Date().getTime(),
+    user: {
+      _id: 2,
+      name: 'Alli Gator',
+      avatar : 'https://cms-uf-cap1.mybluemix.net/uf/Alli-Gator-1.png',
+    }
+  };
+  
+  // helper method that sends a message
+   function handleSend(newMessage = []) {
+     setMessages(GiftedChat.append(messages, messageTemp));
+     setMessages(GiftedChat.append(messages, newMessage));
+     //console.warn(newMessage);
+   }
+
+   const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+  }, [])
 
   return (
     <GiftedChat
       messages={messages}
-      onSend={newMessage => handleSend(newMessage)}
+      //onSend={newMessage => handleSend(newMessage)}
+      onSend={messages => onSend(messages)}
       user={{ _id: 1 }}
+      alwaysShowSend
     />
   );
 }
