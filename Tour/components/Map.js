@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import {FontAwesome5} from 'react-native-vector-icons';
 import Constants from 'expo-constants';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -71,7 +72,17 @@ const MapComp = () => {
     };
 
     requestLocationPermission();
+
   }, []);
+
+  const onCenterMap = () => {
+    mapViewRef.current.animateToRegion({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    });
+  };
 
   if (errorMsg) {
     return (
@@ -89,57 +100,86 @@ const MapComp = () => {
 
   const rotation = heading !== null ? heading : location.coords.heading;
 
-  return (
-    <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        <Marker coordinate={destination} />
-        <MapViewDirections
-          origin={{
+  return(
+      <View style={styles.container}>
+        <MapView
+          ref={(ref) => {
+            this.mapRef = ref;
+          }}
+          style={styles.map}
+          initialRegion={{
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
-          destination={destination}
-          apikey={GOOGLE_MAPS_API_KEY}
-          mode="WALKING"
-          strokeWidth={3}
-          strokeColor="blue"
-          onReady={(result) => {
-            //console.log(result);
-            const distance = result.distance.toFixed(2);
-            const duration = Math.ceil(result.duration);
-            //console.log(distance, duration);
-            setDistance(distance);
-            setDuration(duration);
-          }}
-        />
-        <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          anchor={{ x: 0.5, y: 0.5 }}
-          flat={true}
-          rotation={heading} 
-          //icon={require('./assets/arrow.png')}
         >
-          <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 20 }}>
-           <View style={{ backgroundColor: 'blue', width: 15, height: 15, borderRadius: 10 }} />
-          </View>
-        </Marker>
+          <Marker coordinate={destination} />
+          <MapViewDirections
+            origin={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+            destination={destination}
+            apikey={GOOGLE_MAPS_API_KEY}
+            mode="WALKING"
+            strokeWidth={3}
+            strokeColor="blue"
+            onReady={(result) => {
+              //console.log(result);
+              const distance = result.distance.toFixed(2);
+              const duration = Math.ceil(result.duration);
+              //console.log(distance, duration);
+              setDistance(distance);
+              setDuration(duration);
+            }}
+          />
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+            anchor={{ x: 0.5, y: 0.5 }}
+            flat={true}
+            rotation={heading}
+            //icon={require('./assets/arrow.png')}
+          >
+            <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 20 }}>
+              <View style={{ backgroundColor: 'blue', width: 15, height: 15, borderRadius: 10 }} />
+            </View>
+          </Marker>
+        </MapView>
+        <Text style={styles.distance}>
+          Distance: {distance} m, Duration: {duration} s
+        </Text>
+        <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+          <TouchableOpacity
+            onPress={() =>
+              this.mapRef.animateToRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              })
+            }
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 10,
+              padding: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: 'black',
+              shadowOpacity: 0.5,
+              shadowOffset: { width: 5, height: 5 },
+            }}
+          >
+            <FontAwesome5 name="location-arrow" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
 
-      </MapView>
-      <Text style={styles.distance}>Distance: {distance} m, Duration: {duration} s</Text>
-    </View>
-  );
-};
 
 
 
