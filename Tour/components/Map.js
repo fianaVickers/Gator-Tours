@@ -167,7 +167,7 @@ const MapComp = () => {
         <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
           <TouchableOpacity
             onPress={() =>
-              this.mapRef.animateToRegion({
+              mapViewRef.current.animateToRegion({
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
                 latitudeDelta: 0.0922,
