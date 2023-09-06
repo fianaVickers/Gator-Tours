@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import {FontAwesome5} from 'react-native-vector-icons';
 import Constants from 'expo-constants';
@@ -9,7 +9,7 @@ import * as Permissions from 'expo-permissions';
 import * as Sensors from 'expo-sensors';
 import { Device } from 'expo-device';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBDjJhKhVAql1MMQg2eAFWhtY7zkyvqdEQ';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 
 const styles = StyleSheet.create({
   container: {
@@ -49,10 +49,11 @@ const MapComp = () => {
   const [distance, setDistance] = useState(null);
   const [duration, setDuration] = useState(null);
 
-  const destination = {
+  const [currentDestination, setCurrentDestination] = useState({
     latitude: 29.64567,
     longitude: -82.34860,
-  };
+  }); // Initialize with the default destination
+  const mapViewRef = useRef(null);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -100,12 +101,21 @@ const MapComp = () => {
 
   const rotation = heading !== null ? heading : location.coords.heading;
 
+  const switchDestination = () => {
+    // You can set a new destination here or toggle between two preset destinations
+    // Example: Toggle between two destinations
+    const newDestination =
+      currentDestination.latitude === 29.64567 &&
+      currentDestination.longitude === -82.34860
+        ? { latitude: 29.6488, longitude: -82.3433} // Replace with your new destination coordinates
+        : { latitude: 29.64567, longitude: -82.34860 };
+    setCurrentDestination(newDestination);
+  };
+
   return(
       <View style={styles.container}>
         <MapView
-          ref={(ref) => {
-            this.mapRef = ref;
-          }}
+          ref={mapViewRef} 
           style={styles.map}
           initialRegion={{
             latitude: location.coords.latitude,
@@ -114,13 +124,13 @@ const MapComp = () => {
             longitudeDelta: 0.0421,
           }}
         >
-          <Marker coordinate={destination} />
+          <Marker coordinate={currentDestination} />
           <MapViewDirections
             origin={{
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
             }}
-            destination={destination}
+            destination={currentDestination}
             apikey={GOOGLE_MAPS_API_KEY}
             mode="WALKING"
             strokeWidth={3}
@@ -149,9 +159,11 @@ const MapComp = () => {
             </View>
           </Marker>
         </MapView>
+
         <Text style={styles.distance}>
           Distance: {distance} m, Duration: {duration} s
         </Text>
+
         <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
           <TouchableOpacity
             onPress={() =>
@@ -175,6 +187,24 @@ const MapComp = () => {
           >
             <FontAwesome5 name="location-arrow" size={24} color="black" />
           </TouchableOpacity>
+        </View>
+
+        <View style={{ position: 'absolute', bottom: 20, left: 20 }}>
+         <TouchableOpacity
+          onPress={switchDestination}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 10,
+            padding: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: 'black',
+            shadowOpacity: 0.5,
+            shadowOffset: { width: 5, height: 5 },
+          }}
+        >
+          <Text>Switch Destination</Text>
+        </TouchableOpacity>
         </View>
       </View>
     );
