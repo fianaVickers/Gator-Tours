@@ -366,10 +366,8 @@ const MapComp = ({ route, navigation }) => {
 
       </MapView>
 
-      <Text style={styles.distance}> 
-        {showAllDestinations
-          ? `Closest Distance: ${displayDistance} m, Closest Duration: ${displayDuration} s`
-          : `Distance: ${distance} m, Duration: ${duration} s`}
+      <Text style={styles.distance}>
+        Distance: {distance} m, Duration: {duration} s
       </Text>
 
       <View style={{ position: 'absolute', bottom: 80, right: 350 }}>
