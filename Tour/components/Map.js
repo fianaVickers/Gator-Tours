@@ -109,6 +109,63 @@ const MapComp = () => {
 
   const rotation = heading !== null ? heading : location.coords?.heading;
 
+  //CALCULATIONS
+
+  const walkingSpeed = 1.4; // Adjust as needed
+  // Function to calculate distance between two coordinates
+  const calculateDistance = (coord1, coord2) => {
+    const earthRadius = 6371; // Radius of the Earth in kilometers
+    const lat1 = degToRad(coord1.latitude);
+    const lon1 = degToRad(coord1.longitude);
+    const lat2 = degToRad(coord2.latitude);
+    const lon2 = degToRad(coord2.longitude);
+
+    const dlat = lat2 - lat1;
+    const dlon = lon2 - lon1;
+
+    const a =
+      Math.sin(dlat / 2) ** 2 +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return earthRadius * c;
+  };
+
+  // Function to convert degrees to radians
+  const degToRad = (deg) => deg * (Math.PI / 180);
+
+  // Calculate distances to all destinations
+  const distancesToDestinations = locations.map((destination) =>
+    calculateDistance(
+      {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      },
+      destination
+    )
+  );
+
+  // Find the index of the closest destination
+  const closestDestinationIndex = distancesToDestinations.indexOf(
+    Math.min(...distancesToDestinations)
+  );
+
+  // Determine which destination data to display
+  const destinationToDisplay = showAllDestinations
+    ? locations[closestDestinationIndex]
+    : locations[currentLocationIndex];
+
+  // Determine the distance and duration to display
+  const displayDistance = showAllDestinations
+    ? distancesToDestinations[closestDestinationIndex].toFixed(2)
+    : distance;
+  const displayDuration = showAllDestinations
+    ? Math.ceil(
+        (distancesToDestinations[closestDestinationIndex] * 1000) /
+          (walkingSpeed / 60)
+      )
+    : duration;
+
   return (
     <View style={styles.container}>
       <MapView
@@ -138,7 +195,7 @@ const MapComp = () => {
                 apikey={GOOGLE_MAPS_API_KEY}
                 mode="WALKING"
                 strokeWidth={3}
-                strokeColor="blue"
+                strokeColor={index === closestDestinationIndex && showAllDestinations ? 'red' : 'blue'} // Change color to red for closest route
                 onReady={(result) => {
                   const calculatedDistance = (result.distance / 1000).toFixed(2);
                   const calculatedDuration = Math.ceil(result.duration / 60);
@@ -183,11 +240,13 @@ const MapComp = () => {
               <View style={{ backgroundColor: 'blue', width: 15, height: 15, borderRadius: 10 }} />
             </View>
           </Marker>
-          
+
       </MapView>
 
       <Text style={styles.distance}>
-        Distance: {distance} m, Duration: {duration} s
+        {showAllDestinations
+          ? `Closest Distance: ${displayDistance} m, Closest Duration: ${displayDuration} s`
+          : `Distance: ${distance} m, Duration: ${duration} s`}
       </Text>
 
       <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
@@ -237,7 +296,7 @@ const MapComp = () => {
         <TouchableOpacity
           onPress={() => setShowAllDestinations(!showAllDestinations)}
           style={{
-            backgroundColor: 'white',
+            backgroundColor: showAllDestinations ? 'blue' : 'white', // Change color dynamically
             borderRadius: 10,
             padding: 10,
             alignItems: 'center',
@@ -247,7 +306,7 @@ const MapComp = () => {
             shadowOffset: { width: 5, height: 5 },
           }}
         >
-          <Text>Show All Destinations</Text>
+          <Text style={{ color: showAllDestinations ? 'white' : 'black' }}>Show All Destinations</Text>
         </TouchableOpacity>
       </View>
     </View>
