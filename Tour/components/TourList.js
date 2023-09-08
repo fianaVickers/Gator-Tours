@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import {SectionList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Map from './Map';
+import { createStackNavigator } from '@react-navigation/stack';
+import { TabActions } from '@react-navigation/native';
+import { FlatList } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,10 +26,111 @@ const styles = StyleSheet.create({
   },
 });
 
+
+
+const TourStack = createStackNavigator();
+function TourStackScreen() {
+  return (
+    <TourStack.Navigator>
+     <TourStack.Screen name="Tour Selection" component={TourList} />            
+     <TourStack.Screen name="CustomTourSettings" component={CustomTourSettings} options={({route}) => ({title: route.params.name})}/>
+    </TourStack.Navigator>
+   );
+ }
+
+const CustomTourSettings = ({navigation}) => {
+  return (
+    <Text>Settings for Custom Tour!</Text>
+  );
+};
+
 const TourList = ({navigation}) => {
   const [destination, setDestination] = useState({ latitude: 29.6436, longitude: -82.3549 });
-
-  const onReitzUnionPress = () => {
+  const MajorsTours = [{
+    title: 'Tour by Major',
+    data: [
+      {
+        id: '1',
+        text: 'Computer Engineering'
+      },
+      {
+        id: '2',
+        text: 'Business Administration'
+      },
+      {
+        id: '3',
+        text: 'Zoology'
+      },
+      {
+        id: '4',
+        text: 'Major1'
+      },
+      {
+        id: '5',
+        text: 'Major2'
+      },
+      {
+        id: '6',
+        text: 'Major3'
+      },
+      {
+        id: '7',
+        text: 'Major4'
+      },
+    ]
+  }];
+  
+  const LandmarkTours = [{
+    title: 'Tour by Landmarks',
+    data: [
+      {
+        id: '8',
+        text: 'Reitz Union'
+      },
+      {
+        id: '9',
+        text: 'Century Tower'
+      },
+      {
+        id: '10',
+        text: 'Garden 1'
+      },
+      {
+        id: '11',
+        text: 'Path 2'
+      },
+      {
+        id: '12',
+        text: 'Butterfly Lane'
+      },
+      {
+        id: '13',
+        text: 'Birds and Bees Route'
+      },
+    ]
+  }];
+  
+  const CustomTours = [{
+    title: 'Custom Tour',
+    data: [
+      {
+        id: '14',
+        text: 'Saved Tour 1',
+        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 1'})
+      },
+      {
+        id: '15',
+        text: 'Saved Tour 2',
+        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 2'})
+      },
+      {
+        id: '16',
+        text: 'Saved Tour 3',
+        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 3'})
+      },
+    ],
+  }];
+/*   const onReitzUnionPress = () => {
     // set destination pin to Reitz Union coordinates
     setDestination({ latitude: 29.6462, longitude: -82.3475 });
   };
@@ -34,69 +138,26 @@ const TourList = ({navigation}) => {
   const onCenturyTowerPress = () => {
     // set destination pin to Century Tower coordinates
     setDestination({ latitude: 29.64729, longitude: -82.34791 });
-  };
+  }; */
 
   return (
     <View style={styles.container}>
       <Map destination={destination} />
       <SectionList
-        sections={[
-          {
-            title: 'Tour by Major',
-            data: [
-              'Computer Engineering',
-              'Business Administration',
-              'Zoology',
-              'Major1',
-              'Major2',
-              'Major3',
-              'Major4',
-            ],
-          },
-          {
-            title: 'Tour by Landmarks',
-            data: [
-              {
-                text: 'Reitz Union',
-                onPress: onReitzUnionPress,
-              },
-              {
-                text: 'Century Tower',
-                onPress: onCenturyTowerPress,
-              },
-              'Garden 1',
-              'Path 2',
-              'Butterfly Lane',
-              'Birds and Bees route',
-            ],
-          },
-          {
-            title: 'Custom Tour',
-            data: [
-              'Saved Tour 1',
-              'Saved Tour 2',
-              'Saved Tour 3',
-            ],
-          },
-        ]}
-        renderItem={({item}) => {
-          if (typeof item === 'string') {
-            return <Text style={styles.item}>{item}</Text>;
-          } else {
-            return (
-              <TouchableOpacity onPress={item.onPress}>
-                <Text style={styles.item}>{item.text}</Text>
-              </TouchableOpacity>
-            );
-          }
-        }}
-        renderSectionHeader={({section}) => (
-          <Text style={styles.sectionHeader}>{section.title}</Text>
+        sections={[...MajorsTours, ...LandmarkTours, ...CustomTours]}
+        keyExtractor={item=>item.id}
+        renderItem={({item}) =>(
+          <TouchableOpacity onPress={item.onPress}>
+            <Text style={styles.item}>{item.text}</Text>
+          </TouchableOpacity>
         )}
-        keyExtractor={(item, index) => `basicListEntry-${index}`}
+        renderSectionHeader={({section : {title}}) => (
+          <Text style={styles.sectionHeader}>{title}</Text>
+        )}
+        //keyExtractor={(item, index) => `basicListEntry-${index}`}
       />
     </View>
   );
 };
 
-export default TourList;
+export default TourStackScreen;
