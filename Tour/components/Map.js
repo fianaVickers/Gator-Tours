@@ -9,7 +9,7 @@ import * as Permissions from 'expo-permissions';
 import * as Sensors from 'expo-sensors';
 import { Device } from 'expo-device';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBDjJhKhVAql1MMQg2eAFWhtY7zkyvqdEQ';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 
 const styles = StyleSheet.create({
   container: {
