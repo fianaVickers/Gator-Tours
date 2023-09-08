@@ -4,11 +4,11 @@ import Map from './Map';
 import { createStackNavigator } from '@react-navigation/stack';
 import { TabActions } from '@react-navigation/native';
 import { FlatList } from 'react-native-gesture-handler';
+import { ToggleButton } from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 22,
   },
   sectionHeader: {
     paddingTop: 2,
@@ -24,6 +24,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 60,
   },
+  tourBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
+    paddingHorizontal: 10,
+  },
 });
 
 
@@ -38,9 +44,26 @@ function TourStackScreen() {
    );
  }
 
-const CustomTourSettings = ({navigation}) => {
+
+
+const CustomTourSettings = ({route, navigation}) => {
+  const {id} = route.params;
+  const {name} = route.params;
+
+  const [toggle, setToggle] = React.useState('unchecked');
+
+  const OnCustomToggle = () => {
+    setToggle(toggle === 'unchecked'? 'checked': 'unchecked');
+  };
+
   return (
-    <Text>Settings for Custom Tour!</Text>
+  <View>
+    <Text>Settings for {name}</Text>
+    <View style={styles.tourBox}>
+      <ToggleButton icon='check' onPress={OnCustomToggle} status={toggle}></ToggleButton>
+      <Text style={styles.item}>Reitz Union</Text>
+    </View>
+  </View>
   );
 };
 
@@ -116,45 +139,37 @@ const TourList = ({navigation}) => {
       {
         id: '14',
         text: 'Saved Tour 1',
-        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 1'})
+        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 1', id: '14'})
       },
       {
         id: '15',
         text: 'Saved Tour 2',
-        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 2'})
+        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 2', id: '15'})
       },
       {
         id: '16',
         text: 'Saved Tour 3',
-        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 3'})
+        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 3', id: '16'})
       },
     ],
   }];
-/*   const onReitzUnionPress = () => {
-    // set destination pin to Reitz Union coordinates
-    setDestination({ latitude: 29.6462, longitude: -82.3475 });
-  };
-
-  const onCenturyTowerPress = () => {
-    // set destination pin to Century Tower coordinates
-    setDestination({ latitude: 29.64729, longitude: -82.34791 });
-  }; */
 
   return (
     <View style={styles.container}>
-      <Map destination={destination} />
       <SectionList
         sections={[...MajorsTours, ...LandmarkTours, ...CustomTours]}
         keyExtractor={item=>item.id}
-        renderItem={({item}) =>(
-          <TouchableOpacity onPress={item.onPress}>
-            <Text style={styles.item}>{item.text}</Text>
-          </TouchableOpacity>
+        renderItem={({item, section: {title}}) =>(
+          <View style={styles.tourBox}>
+            <TouchableOpacity>
+              <Text style={styles.item}>{item.text}</Text>
+            </TouchableOpacity>
+            {title == 'Custom Tour'? <Text style={styles.item} onPress={item.onPress}>Edit</Text>: null}
+          </View>
         )}
         renderSectionHeader={({section : {title}}) => (
           <Text style={styles.sectionHeader}>{title}</Text>
         )}
-        //keyExtractor={(item, index) => `basicListEntry-${index}`}
       />
     </View>
   );
