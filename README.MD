@@ -3,6 +3,12 @@
 (The following steps only work for WSL Ubuntu Development Environments!)
 [Skip to Pre Alpha Documentation!](#prealpha-documentation)
 [Skip to Prototype Documentation!](#prototype-documentation)
+
+## Gator Tours Project Description
+Gator Tours is a mobile application that utilizes the University of Florida’s (UF) chat bot, Alli Gator, to provide useful information about UF’s campus through virtual tours. Gator Tour’s functionality bleeds into several different sectors, the hospitality, travel, and education industry. Due to an influx of people booking in-person tours hosted on the University of Florida’s campus, unfortunately, there are not enough tour guides to meet the demand. Gator Tours addresses this issue by giving people access to another tour option, where they receive the same information but with a different experience. 
+The mobile application acts as a virtual tour guide, similar to other virtual tours hosted on Zoom such as GoWithGuide and World Virtual Tours. However, both GoWithGuide and World Virtual Tours utilize zoom to host tours, and due to this limitation occur during predetermined times. However, Gator Tours provides a more convenient, hands-off approach to virtual tours. Gator Tours does not utilize any external face cam service to achieve its functionality and is available anytime at its user’s convenience. Gator Tour’s beacon interface is the application’s most distinguishing implementation. The application communicates with beacons scattered throughout the University of Florida’s campus; it provides information about a location on campus if a user is within a certain range from the beacon. 
+This application provides access to individuals who prefer a remote tour guide due to health implications or travel complications. Gator Tours’ main goal includes reducing the information gap that individuals without access to in-person virtual tours experience.
+
 ## Download and Install the appropriate dependencies for React Native
 installs the npm package manager
 ```bash
