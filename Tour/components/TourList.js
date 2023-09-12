@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {SectionList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import Map from './Map';
 import { createStackNavigator } from '@react-navigation/stack';
 import { TabActions } from '@react-navigation/native';
-import { FlatList } from 'react-native-gesture-handler';
 import { ToggleButton } from 'react-native-paper';
+import { Button } from 'react-native';
+import { AsyncStorage, useAsyncStorage } from '@react-native-async-storage/async-storage';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,8 +32,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
 const TourStack = createStackNavigator();
 function TourStackScreen() {
   return (
@@ -42,33 +40,73 @@ function TourStackScreen() {
      <TourStack.Screen name="CustomTourSettings" component={CustomTourSettings} options={({route}) => ({title: route.params.name})}/>
     </TourStack.Navigator>
    );
- }
+ };
 
-
-
-const CustomTourSettings = ({route, navigation}) => {
+ const CustomTourSettings = ({route, navigation}) => {
   const {id} = route.params;
-  const {name} = route.params;
 
-  const [toggle, setToggle] = React.useState('unchecked');
+  const [list, setList] = useState({
+    reitzUnion: 'unchecked',
+    centuryTower: 'unchecked'
+  });
+  
+  const {getItem, setItem} = useAsyncStorage(id);
 
-  const OnCustomToggle = () => {
-    setToggle(toggle === 'unchecked'? 'checked': 'unchecked');
+  const readItemFromStorage = async () => {
+    console.log("ReadItemFromStorage");
+    try {
+      const item = await getItem();
+      (item != null)?setList(JSON.parse(item)):console.log("no existing value");
+    } catch(e) {
+      setList({
+        reitzUnion: 'unchecked',
+        centuryTower: 'unchecked'
+      });
+    }
+  };
+
+  const writeItemToStorage = async newList => {
+    console.log("id: " + id + "of type: " + typeof(id));
+    await setItem(JSON.stringify(newList));
+    setList(newList);
+  };
+
+  useEffect(() => {
+    console.log("UseEffect");
+    readItemFromStorage();
+  }, []);
+
+  const submitForm = async () => {
+    console.log("SubmitForm");
+    writeItemToStorage(list);
+  };
+
+  const reitzToggle = () => {
+    setList({...list, reitzUnion: list.reitzUnion === 'unchecked'? 'checked': 'unchecked'});
+  };
+
+  const centuryTowerToggle = () => {
+    setList({...list, centuryTower: list.centuryTower === 'unchecked'? 'checked': 'unchecked'});
   };
 
   return (
-  <View>
-    <Text>Settings for {name}</Text>
-    <View style={styles.tourBox}>
-      <ToggleButton icon='check' onPress={OnCustomToggle} status={toggle}></ToggleButton>
+  <View style = {{flex: 1, flexDirection: 'column', paddingHorizontal: 10}}>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={reitzToggle} status={list.reitzUnion}/>
       <Text style={styles.item}>Reitz Union</Text>
     </View>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={centuryTowerToggle} status={list.centuryTower}/>
+      <Text style={styles.item}>Century Tower</Text>
+    </View>
+    <TouchableOpacity onPress={submitForm} title='submit' type='outline' color='#3275a8' style={{alignItems: 'center', backgroundColor: '#03befc', padding: 10}}>
+      <Text>Submit</Text>
+    </TouchableOpacity>
   </View>
   );
 };
 
 const TourList = ({navigation}) => {
-  const [destination, setDestination] = useState({ latitude: 29.6436, longitude: -82.3549 });
   const MajorsTours = [{
     title: 'Tour by Major',
     data: [
@@ -132,7 +170,7 @@ const TourList = ({navigation}) => {
       },
     ]
   }];
-  
+
   const CustomTours = [{
     title: 'Custom Tour',
     data: [
