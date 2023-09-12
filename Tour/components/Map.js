@@ -10,6 +10,7 @@ import * as Sensors from 'expo-sensors';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 
+
 const locations = [
   { latitude: 29.64567, longitude: -82.34860 }, // Reitz
   { latitude: 29.6488, longitude: -82.3433 }, // Century Tower
