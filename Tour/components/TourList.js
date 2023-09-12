@@ -53,10 +53,9 @@ function TourStackScreen() {
   const {getItem, setItem} = useAsyncStorage(id);
 
   const readItemFromStorage = async () => {
-    console.log("ReadItemFromStorage");
     try {
       const item = await getItem();
-      (item != null)?setList(JSON.parse(item)):console.log("no existing value");
+      (item != null)?setList(JSON.parse(item)):null;
     } catch(e) {
       setList({
         reitzUnion: 'unchecked',
@@ -66,18 +65,15 @@ function TourStackScreen() {
   };
 
   const writeItemToStorage = async newList => {
-    console.log("id: " + id + "of type: " + typeof(id));
     await setItem(JSON.stringify(newList));
     setList(newList);
   };
 
   useEffect(() => {
-    console.log("UseEffect");
     readItemFromStorage();
   }, []);
 
   const submitForm = async () => {
-    console.log("SubmitForm");
     writeItemToStorage(list);
   };
 
