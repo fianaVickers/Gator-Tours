@@ -11,7 +11,6 @@ import { FontAwesome } from '@expo/vector-icons';
 //require('dotenv').config();
 
 // You can import from local files
-import AssetExample from './components/AssetExample';
 import MapComp from './components/Map';
 import TourStackScreen from './components/TourList';
 import RoomScreen from './components/chatUI';
