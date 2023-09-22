@@ -102,17 +102,24 @@ function TourStackScreen() {
   );
 };
 
-const TourList = ({navigation}) => {
+const TourList = (props) => {
+  const {navigation} = props;
   const MajorsTours = [{
     title: 'Tour by Major',
     data: [
       {
         id: '1',
-        text: 'Computer Engineering'
+        text: 'Computer Engineering',
+        onPress: () => navigation.navigate('Map', {locations: [
+          { latitude: 29.64567, longitude: -82.34860 },
+          { latitude: 29.6488, longitude: -82.3433 },
+          { latitude: 29.6481, longitude: -82.3437 },
+        ]})
       },
       {
         id: '2',
-        text: 'Business Administration'
+        text: 'Business Administration',
+        onPress: () => navigation.navigate('Map', {msg: "Buisness Admin!"})
       },
       {
         id: '3',
@@ -142,11 +149,13 @@ const TourList = ({navigation}) => {
     data: [
       {
         id: '8',
-        text: 'Reitz Union'
+        text: 'Reitz Union',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64567, longitude: -82.34860 }]})
       },
       {
         id: '9',
-        text: 'Century Tower'
+        text: 'Century Tower',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.6488, longitude: -82.3433 }]})
       },
       {
         id: '10',
@@ -195,7 +204,7 @@ const TourList = ({navigation}) => {
         keyExtractor={item=>item.id}
         renderItem={({item, section: {title}}) =>(
           <View style={styles.tourBox}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={item.onPress}>
               <Text style={styles.item}>{item.text}</Text>
             </TouchableOpacity>
             {title == 'Custom Tour'? <Text style={styles.item} onPress={item.onPress}>Edit</Text>: null}

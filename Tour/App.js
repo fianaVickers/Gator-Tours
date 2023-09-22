@@ -24,7 +24,11 @@ const MapStack = createStackNavigator();
 function MapStackScreen() {
   return (
     <MapStack.Navigator>
-     <MapStack.Screen name="Map" component={MapComp} />            
+     <MapStack.Screen name="Map" component={MapComp} initialParams={{locations: [
+          { latitude: 29.64567, longitude: -82.34860 },
+          { latitude: 29.6488, longitude: -82.3433 },
+          { latitude: 29.6481, longitude: -82.3437 },
+        ]}}/>            
      <MapStack.Screen name="Details" component={DetailsScreen} />
     </MapStack.Navigator>
    );
