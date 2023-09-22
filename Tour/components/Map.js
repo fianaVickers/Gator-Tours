@@ -10,14 +10,6 @@ import * as Sensors from 'expo-sensors';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 
-
-const locations = [
-  { latitude: 29.64567, longitude: -82.34860 }, // Reitz
-  { latitude: 29.6488, longitude: -82.3433 }, // Century Tower
-  { latitude: 29.6481, longitude: -82.3437 }, // Marston
-  // Add more locations here
-];
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -49,7 +41,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MapComp = () => {
+const MapComp = (props) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [heading, setHeading] = useState(null);
@@ -58,6 +50,8 @@ const MapComp = () => {
   const [currentLocationIndex, setCurrentLocationIndex] = useState(0);
   const mapViewRef = useRef(null);
   const [showAllDestinations, setShowAllDestinations] = useState(false);
+  const { route } = props;
+  const { locations } = route.params;
 
   useEffect(() => {
     const requestLocationPermission = async () => {
