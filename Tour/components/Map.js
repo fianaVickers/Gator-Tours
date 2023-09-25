@@ -54,23 +54,28 @@ const MapComp = (props) => {
   const { locations } = route.params;
 
   useEffect(() => {
-    const requestLocationPermission = async () => {
-      const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    const requestLocation = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
         return;
       }
 
-      Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
-        setLocation(location);
-      });
+      const locationSubscription = await Location.watchPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 1000,
+        distanceInterval: 1,
+      }, (location => { setLocation(location); }));
+      //Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+      //  setLocation(location);
+      //});
 
-      Sensors.watchHeadingAsync((heading) => {
+      Location.watchHeadingAsync((heading) => {
         setHeading(heading.magHeading);
       });
     };
 
-    requestLocationPermission();
+    requestLocation();
   }, []);
 
   const onCenterMap = () => {
