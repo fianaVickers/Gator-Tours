@@ -66,9 +66,6 @@ const MapComp = (props) => {
         timeInterval: 1000,
         distanceInterval: 1,
       }, (location => { setLocation(location); }));
-      //Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
-      //  setLocation(location);
-      //});
 
       Location.watchHeadingAsync((heading) => {
         setHeading(heading.magHeading);
