@@ -21,7 +21,7 @@ export default function RoomScreen() {
       user: {
         _id: 2,
         name: 'Alli Gator',
-        avatar : 'https://cms-uf-cap1.mybluemix.net/uf/Alli-Gator-1.png',
+        avatar : 'https://cms.mc-cap1.cogability.net/uf/Alli-Gator-1.png',
       }
     }
   ]);
