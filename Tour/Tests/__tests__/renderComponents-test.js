@@ -17,12 +17,12 @@ test('Details scrren renders correctly', () => {
   console.log(tree)
 });
 
-//test('Map component renders correctly', () => {
-//  const tree = renderer.create(<MapComp />).toJSON();
-//  expect(tree).toMatchSnapshot();
-//})
-//
-//test('Custom Tour List screen renders correctly', () => {
-//  const tree = renderer.create(<TourList />).toJSON();
-//  expect(tree).toMatchSnapshot();
-//});
+test('Map component renders correctly', () => {
+  const tree = renderer.create(<MapComp />).toJSON();
+  expect(tree).toMatchSnapshot();
+})
+
+test('Custom Tour List screen renders correctly', () => {
+  const tree = renderer.create(<TourList />).toJSON();
+  expect(tree).toMatchSnapshot();
+});
