@@ -11,9 +11,8 @@ import { FontAwesome } from '@expo/vector-icons';
 //require('dotenv').config();
 
 // You can import from local files
-import AssetExample from './components/AssetExample';
 import MapComp from './components/Map';
-import TourList from './components/TourList';
+import TourStackScreen from './components/TourList';
 import RoomScreen from './components/chatUI';
 import DetailsScreen from './components/Detail';
 
@@ -41,15 +40,7 @@ function ChatStackScreen() {
    );
  }
 
-const TourStack = createStackNavigator();
-function TourStackScreen() {
-  return (
-    <TourStack.Navigator>
-     <TourStack.Screen name="Tour Selection" component={TourList} />            
-     <TourStack.Screen name="Details" component={DetailsScreen} />
-    </TourStack.Navigator>
-   );
- }
+
 
 const Tour = createStackNavigator();
 
