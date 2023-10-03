@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   item: {
     padding: 15,
     fontSize: 18,
-    height: 60,
+    height: 70,
   },
   tourBox: {
     flexDirection: 'row',
@@ -47,7 +47,11 @@ function TourStackScreen() {
 
   const [list, setList] = useState({
     reitzUnion: 'unchecked',
-    centuryTower: 'unchecked'
+    centuryTower: 'unchecked',
+    newEngineeringBuilding: 'unchecked',
+    wertheimLab: 'unchecked',
+    marston: 'unchecked',
+    libraryWest: 'unchecked'
   });
   
   const {getItem, setItem} = useAsyncStorage(id);
@@ -58,8 +62,12 @@ function TourStackScreen() {
       (item != null)?setList(JSON.parse(item)):null;
     } catch(e) {
       setList({
-        reitzUnion: 'unchecked',
-        centuryTower: 'unchecked'
+        reitzUnion: false,
+        centuryTower: false,
+        newEngineeringBuilding: false,
+        wertheimLab: false,
+        marston: false,
+        libraryWest: false
       });
     }
   };
@@ -75,25 +83,66 @@ function TourStackScreen() {
 
   const submitForm = async () => {
     writeItemToStorage(list);
+    const locations = [
+      ...(list.reitzUnion ? [{ latitude: 29.64567, longitude: -82.34860}] : []),
+      ...(list.centuryTower ? [{ latitude: 29.6488, longitude: -82.3433 }] : []),
+      ...(list.newEngineeringBuilding ? [{ latitude: 29.64229, longitude: -82.34702 }] : []),
+      ...(list.wertheimLab ? [{ latitude: 29.64739, longitude: -82.34803 }] : []),
+      ...(list.marston ? [{ latitude: 29.64810, longitude: -82.34378 }] : []),
+      ...(list.libraryWest ? [{ latitude: 29.65103, longitude: -82.34288 }] : []),
+    ];
+    navigation.navigate("Map", {locations: locations});
   };
 
   const reitzToggle = () => {
-    setList({...list, reitzUnion: list.reitzUnion === 'unchecked'? 'checked': 'unchecked'});
+    setList({...list, reitzUnion: !list.reitzUnion});
   };
 
   const centuryTowerToggle = () => {
-    setList({...list, centuryTower: list.centuryTower === 'unchecked'? 'checked': 'unchecked'});
+    setList({...list, centuryTower: !list.centuryTower});
+  };
+
+  const newEngineeringBuildingToggle = () => {
+    setList({...list, newEngineeringBuilding: !list.newEngineeringBuilding});
+  };
+
+  const wertheimLabToggle = () => {
+    setList({...list, wertheimLab: !list.wertheimLab});
+  };
+
+  const marstonToggle = () => {
+    setList({...list, marston: !list.marston});
+  };
+
+  const libraryWestToggle = () => {
+    setList({...list, libraryWest: !list.libraryWest});
   };
 
   return (
   <View style = {{flex: 1, flexDirection: 'column', paddingHorizontal: 10}}>
     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={reitzToggle} status={list.reitzUnion}/>
+      <ToggleButton icon='check' onPress={reitzToggle} status={list.reitzUnion?'checked':'unchecked'}/>
       <Text style={styles.item}>Reitz Union</Text>
     </View>
     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={centuryTowerToggle} status={list.centuryTower}/>
+      <ToggleButton icon='check' onPress={centuryTowerToggle} status={list.centuryTower?'checked':'unchecked'}/>
       <Text style={styles.item}>Century Tower</Text>
+    </View>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={newEngineeringBuildingToggle} status={list.newEngineeringBuilding?'checked':'unchecked'}/>
+      <Text style={styles.item}>New Engineering Building</Text>
+    </View>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={wertheimLabToggle} status={list.wertheimLab?'checked':'unchecked'}/>
+      <Text style={styles.item}>Herbert Wertheim Laboratory for Engineering Excellence</Text>
+    </View>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={marstonToggle} status={list.marston?'checked':'unchecked'}/>
+      <Text style={styles.item}>Marston Science Library</Text>
+    </View>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={libraryWestToggle} status={list.libraryWest?'checked':'unchecked'}/>
+      <Text style={styles.item}>Library West</Text>
     </View>
     <TouchableOpacity onPress={submitForm} title='submit' type='outline' color='#3275a8' style={{alignItems: 'center', backgroundColor: '#03befc', padding: 10}}>
       <Text>Submit</Text>
@@ -102,17 +151,26 @@ function TourStackScreen() {
   );
 };
 
-const TourList = ({navigation}) => {
+
+
+const TourList = (props) => {
+  const {navigation} = props;
   const MajorsTours = [{
     title: 'Tour by Major',
     data: [
       {
         id: '1',
-        text: 'Computer Engineering'
+        text: 'Computer Engineering',
+        onPress: () => navigation.navigate('Map', {locations: [
+          { latitude: 29.64567, longitude: -82.34860 },
+          { latitude: 29.6488, longitude: -82.3433 },
+          { latitude: 29.6481, longitude: -82.3437 },
+        ]})
       },
       {
         id: '2',
-        text: 'Business Administration'
+        text: 'Business Administration',
+        onPress: () => navigation.navigate('Map', {msg: "Buisness Admin!"})
       },
       {
         id: '3',
@@ -133,36 +191,6 @@ const TourList = ({navigation}) => {
       {
         id: '7',
         text: 'Major4'
-      },
-    ]
-  }];
-  
-  const LandmarkTours = [{
-    title: 'Tour by Landmarks',
-    data: [
-      {
-        id: '8',
-        text: 'Reitz Union'
-      },
-      {
-        id: '9',
-        text: 'Century Tower'
-      },
-      {
-        id: '10',
-        text: 'Garden 1'
-      },
-      {
-        id: '11',
-        text: 'Path 2'
-      },
-      {
-        id: '12',
-        text: 'Butterfly Lane'
-      },
-      {
-        id: '13',
-        text: 'Birds and Bees Route'
       },
     ]
   }];
@@ -188,6 +216,42 @@ const TourList = ({navigation}) => {
     ],
   }];
 
+  const LandmarkTours = [{
+    title: 'Tour by Landmarks',
+    data: [
+      {
+        id: '8',
+        text: 'Reitz Union',
+        onPress: () => navigation.navigate('Map', {locations: [{latitude: 29.64567, longitude: -82.34860}]})
+      },
+      {
+        id: '9',
+        text: 'Century Tower',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.6488, longitude: -82.3433 }]})
+      },
+      {
+        id: '10',
+        text: 'New Engineering Building',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64229, longitude: -82.34702 }]})
+      },
+      {
+        id: '11',
+        text: 'Herbert Wertheim Laboratory for Engineering Excellence',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64739, longitude: -82.34803 }]})
+      },
+      {
+        id: '12',
+        text: 'Marston Science Library',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64810, longitude: -82.34378 }]})
+      },
+      {
+        id: '13',
+        text: 'Library West',
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.65103, longitude: -82.34288 }]})
+      },
+    ]
+  }];
+
   return (
     <View style={styles.container}>
       <SectionList
@@ -195,10 +259,9 @@ const TourList = ({navigation}) => {
         keyExtractor={item=>item.id}
         renderItem={({item, section: {title}}) =>(
           <View style={styles.tourBox}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={item.onPress}>
               <Text style={styles.item}>{item.text}</Text>
             </TouchableOpacity>
-            {title == 'Custom Tour'? <Text style={styles.item} onPress={item.onPress}>Edit</Text>: null}
           </View>
         )}
         renderSectionHeader={({section : {title}}) => (
