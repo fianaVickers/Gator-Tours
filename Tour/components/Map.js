@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MapComp = (props) => {
+const MapComp = ({ route, navigation }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [heading, setHeading] = useState(null);
@@ -52,9 +52,10 @@ const MapComp = (props) => {
   const [currentLocationIndex, setCurrentLocationIndex] = useState(0);
   const mapViewRef = useRef(null);
   const [showAllDestinations, setShowAllDestinations] = useState(false);
-  const { route } = props;
-  const { locations } = route.params;
+  //const { route} = props;
+  const { locations, updateLocations } = route.params;
   const [originLocation, setOriginLocation] = useState(null); // Add state for origin location
+  const [destinations, setDestinations] = useState(locations);
 
 
   useEffect(() => {
@@ -73,6 +74,8 @@ const MapComp = (props) => {
         if (newLocation && newLocation.coords) {
           setLocation(newLocation); // Update location state with the new location
           setOriginLocation(newLocation.coords); // Update origin location state
+         // console.log('New location received:', newLocation); 
+
         }
       });
 
@@ -125,6 +128,46 @@ const MapComp = (props) => {
     );
   }
 
+  const handleMarkVisited = (destinationIndex) => {
+    const updatedDestinations = destinations.map((destination, index) => {
+      if (index === destinationIndex) {
+        const destinationCoords = {
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+        };
+
+        const distanceToDestination = calculateDistance(
+          originLocation,
+          destinationCoords
+        );
+
+        if (!isNaN(distanceToDestination)) {
+          const proximityThreshold = 0.01;
+
+          if (distanceToDestination < proximityThreshold) {
+            const updatedDestination = {
+              ...destination,
+              visited: !destination.visited,
+            };
+
+            return updatedDestination;
+          }
+        }
+      }
+      return destination;
+    });
+
+    // Update the destinations state, not locations
+    setDestinations(updatedDestinations);
+
+    // Update the locations using navigation.setOptions
+    navigation.setOptions({
+      params: {
+        ...route.params,
+        locations: updatedDestinations, // Update locations with updatedDestinations
+      },
+    });
+  };
   const rotation = heading !== null ? heading : location.coords?.heading;
 
   //CALCULATIONS
@@ -197,12 +240,12 @@ const MapComp = (props) => {
         }}
       >
         {locations.map((destination, index) => (
-          <Marker key={index} coordinate={destination} />
+          <Marker key={index} coordinate={destination} />          
         ))}
 
         {showAllDestinations && (
           <>
-            {locations.map((destination, index) => (
+            {destinations.map((destination, index) => (
               <MapViewDirections
                 key={index}
                 origin={originLocation} // Use originLocation state
@@ -238,6 +281,38 @@ const MapComp = (props) => {
             }}
           />
         )}
+
+          {destinations.map((destination, index) => (
+            <TouchableOpacity
+              onPress={() => handleMarkVisited(index)}
+              style={{
+                backgroundColor: destination.visited ? 'green' : 'red',
+                borderRadius: 10,
+                padding: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: 'black',
+                shadowOpacity: 0.5,
+                shadowOffset: { width: 5, height: 5 },
+                position: 'absolute',
+                top: 20 + index * 60,
+                right: 20,
+              }}
+              key={index}
+            >
+              <Text
+                style={{
+                  color: 'white',
+                  fontWeight: 'bold',
+                  textAlign: 'center', // Center text horizontally
+                  textAlignVertical: 'center', // Center text vertically
+                }}
+              >
+                {destination.visited ? 'Visited' : 'Not Visited'}
+              </Text>
+            </TouchableOpacity>
+          ))}
+
         <Marker
             coordinate={{
               latitude: location.coords.latitude,

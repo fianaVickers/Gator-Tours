@@ -111,9 +111,9 @@ const TourList = (props) => {
         id: '1',
         text: 'Computer Engineering',
         onPress: () => navigation.navigate('Map', {locations: [
-          { latitude: 29.64567, longitude: -82.34860 },
-          { latitude: 29.6488, longitude: -82.3433 },
-          { latitude: 29.6481, longitude: -82.3437 },
+          { latitude: 29.64567, longitude: -82.34860, visited: false },
+          { latitude: 29.6488, longitude: -82.3433, visited: false },
+          { latitude: 29.6481, longitude: -82.3437, visited: false },
         ]})
       },
       {
@@ -150,12 +150,12 @@ const TourList = (props) => {
       {
         id: '8',
         text: 'Reitz Union',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64567, longitude: -82.34860 }]})
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64567, longitude: -82.34860, visited: false }]})
       },
       {
         id: '9',
         text: 'Century Tower',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.6488, longitude: -82.3433 }]})
+        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.6488, longitude: -82.3433, visited: false }]})
       },
       {
         id: '10',
