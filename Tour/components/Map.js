@@ -128,6 +128,7 @@ const MapComp = ({ route, navigation }) => {
     );
   }
 
+  //VISITED BUTTON 
   const handleMarkVisited = (destinationIndex) => {
     const updatedDestinations = destinations.map((destination, index) => {
       if (index === destinationIndex) {
@@ -156,6 +157,45 @@ const MapComp = ({ route, navigation }) => {
       }
       return destination;
     });
+
+
+    //RENDERING VISITED BUTTON
+
+    const renderNotVisitedButtons = () => {
+      if (!showAllDestinations) {
+        return destinations.map((destination, index) => (
+          <TouchableOpacity
+            onPress={() => handleMarkVisited(index)}
+            style={{
+              backgroundColor: destination.visited ? 'green' : 'red',
+              borderRadius: 10,
+              padding: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: 'black',
+              shadowOpacity: 0.5,
+              shadowOffset: { width: 5, height: 5 },
+              position: 'absolute',
+              top: 20 + index * 60,
+              right: 20,
+            }}
+            key={index}
+          >
+            <Text
+              style={{
+                color: 'white',
+                fontWeight: 'bold',
+                textAlign: 'center', // Center text horizontally
+                textAlignVertical: 'center', // Center text vertically
+              }}
+            >
+              {destination.visited ? 'Visited' : 'Not Visited'}
+            </Text>
+          </TouchableOpacity>
+        ));
+      }
+      return null; // Return null if showAllDestinations is true
+    };
 
     // Update the destinations state, not locations
     setDestinations(updatedDestinations);
@@ -282,37 +322,6 @@ const MapComp = ({ route, navigation }) => {
           />
         )}
 
-          {destinations.map((destination, index) => (
-            <TouchableOpacity
-              onPress={() => handleMarkVisited(index)}
-              style={{
-                backgroundColor: destination.visited ? 'green' : 'red',
-                borderRadius: 10,
-                padding: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-                shadowColor: 'black',
-                shadowOpacity: 0.5,
-                shadowOffset: { width: 5, height: 5 },
-                position: 'absolute',
-                top: 20 + index * 60,
-                right: 20,
-              }}
-              key={index}
-            >
-              <Text
-                style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  textAlign: 'center', // Center text horizontally
-                  textAlignVertical: 'center', // Center text vertically
-                }}
-              >
-                {destination.visited ? 'Visited' : 'Not Visited'}
-              </Text>
-            </TouchableOpacity>
-          ))}
-
         <Marker
             coordinate={{
               latitude: location.coords.latitude,
@@ -370,23 +379,58 @@ const MapComp = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
-        <TouchableOpacity
-          onPress={switchDestination}
+      {!showAllDestinations && (
+  <>
+    <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
+      <TouchableOpacity
+        onPress={switchDestination}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 10,
+          padding: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: 'black',
+          shadowOpacity: 0.5,
+          shadowOffset: { width: 5, height: 5 },
+        }}
+      >
+        <Text>Next Destination</Text>
+      </TouchableOpacity>
+    </View>
+
+    {destinations.map((destination, index) => (
+      <TouchableOpacity
+        key={index} // Ensure each button has a unique key
+        onPress={() => handleMarkVisited(index)}
+        style={{
+          backgroundColor: destination.visited ? 'green' : 'red',
+          borderRadius: 10,
+          padding: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: 'black',
+          shadowOpacity: 0.5,
+          shadowOffset: { width: 5, height: 5 },
+          position: 'absolute',
+          top: 20 + index * 60,
+          right: 20,
+        }}
+      >
+        <Text
           style={{
-            backgroundColor: 'white',
-            borderRadius: 10,
-            padding: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            shadowColor: 'black',
-            shadowOpacity: 0.5,
-            shadowOffset: { width: 5, height: 5 },
+            color: 'white',
+            fontWeight: 'bold',
+            textAlign: 'center', // Center text horizontally
+            textAlignVertical: 'center', // Center text vertically
           }}
         >
-          <Text>Next Destination</Text>
-        </TouchableOpacity>
-      </View>
+          {destination.visited ? 'Visited' : 'Not Visited'}
+        </Text>
+      </TouchableOpacity>
+    ))}
+  </>
+)}
 
       <View style={{ position: 'absolute', top: 10, left: 20 }}>
         <TouchableOpacity
