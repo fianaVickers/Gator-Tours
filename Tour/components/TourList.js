@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {SectionList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {SectionList, StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { TabActions } from '@react-navigation/native';
 import { ToggleButton } from 'react-native-paper';
-import { Button } from 'react-native';
 import { AsyncStorage, useAsyncStorage } from '@react-native-async-storage/async-storage';
+import { getTours } from './tour_data/tours.js';
+import PagerView from 'react-native-pager-view';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -32,17 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const TourStack = createStackNavigator();
-function TourStackScreen() {
-  return (
-    <TourStack.Navigator>
-     <TourStack.Screen name="Tour Selection" component={TourList} />            
-     <TourStack.Screen name="CustomTourSettings" component={CustomTourSettings} options={({route}) => ({title: route.params.name})}/>
-    </TourStack.Navigator>
-   );
- };
-
- const CustomTourSettings = ({route, navigation}) => {
+const CustomTourSettings = ({route, navigation}) => {
   const {id} = route.params;
 
   const [list, setList] = useState({
@@ -155,113 +146,20 @@ function TourStackScreen() {
 
 const TourList = (props) => {
   const {navigation} = props;
-  const MajorsTours = [{
-    title: 'Tour by Major',
-    data: [
-      {
-        id: '1',
-        text: 'Computer Engineering',
-        onPress: () => navigation.navigate('Map', {locations: [
-          { latitude: 29.64567, longitude: -82.34860 },
-          { latitude: 29.6488, longitude: -82.3433 },
-          { latitude: 29.6481, longitude: -82.3437 },
-        ]})
-      },
-      {
-        id: '2',
-        text: 'Business Administration',
-        onPress: () => navigation.navigate('Map', {msg: "Buisness Admin!"})
-      },
-      {
-        id: '3',
-        text: 'Zoology'
-      },
-      {
-        id: '4',
-        text: 'Major1'
-      },
-      {
-        id: '5',
-        text: 'Major2'
-      },
-      {
-        id: '6',
-        text: 'Major3'
-      },
-      {
-        id: '7',
-        text: 'Major4'
-      },
-    ]
-  }];
 
-  const CustomTours = [{
-    title: 'Custom Tour',
-    data: [
-      {
-        id: '14',
-        text: 'Saved Tour 1',
-        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 1', id: '14'})
-      },
-      {
-        id: '15',
-        text: 'Saved Tour 2',
-        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 2', id: '15'})
-      },
-      {
-        id: '16',
-        text: 'Saved Tour 3',
-        onPress: () => navigation.navigate('CustomTourSettings', {name: 'Saved Tour 3', id: '16'})
-      },
-    ],
-  }];
-
-  const LandmarkTours = [{
-    title: 'Tour by Landmarks',
-    data: [
-      {
-        id: '8',
-        text: 'Reitz Union',
-        onPress: () => navigation.navigate('Map', {locations: [{latitude: 29.64567, longitude: -82.34860}]})
-      },
-      {
-        id: '9',
-        text: 'Century Tower',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.6488, longitude: -82.3433 }]})
-      },
-      {
-        id: '10',
-        text: 'New Engineering Building',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64229, longitude: -82.34702 }]})
-      },
-      {
-        id: '11',
-        text: 'Herbert Wertheim Laboratory for Engineering Excellence',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64739, longitude: -82.34803 }]})
-      },
-      {
-        id: '12',
-        text: 'Marston Science Library',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.64810, longitude: -82.34378 }]})
-      },
-      {
-        id: '13',
-        text: 'Library West',
-        onPress: () => navigation.navigate('Map', {locations: [{ latitude: 29.65103, longitude: -82.34288 }]})
-      },
-    ]
-  }];
+  const tours = getTours();
 
   return (
     <View style={styles.container}>
       <SectionList
-        sections={[...MajorsTours, ...LandmarkTours, ...CustomTours]}
+        sections={tours}
         keyExtractor={item=>item.id}
         renderItem={({item, section: {title}}) =>(
           <View style={styles.tourBox}>
-            <TouchableOpacity onPress={item.onPress}>
-              <Text style={styles.item}>{item.text}</Text>
-            </TouchableOpacity>
+            {title == "Custom Tour"
+              ? <TouchableOpacity onPress={() => navigation.navigate('CustomTourSettings', {text: item.text, id: item.id})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
+              : <TouchableOpacity onPress={() => navigation.navigate('TourDescription', {text: item.text, id: item.id})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
+            }  
           </View>
         )}
         renderSectionHeader={({section : {title}}) => (
@@ -271,5 +169,57 @@ const TourList = (props) => {
     </View>
   );
 };
+
+const TourDescription = (props) => {
+  const {navigation, route} = props;
+  const {id} = route.params;
+  
+  function getTour(id) {
+    const tours = getTours();
+    for (let i = 0; i < tours.length; i++) {
+      for (let j = 0; j < tours[i].data.length; j++) {
+        if(tours[i].data[j].id == id) {
+          return tours[i].data[j];
+        }
+      }
+    }
+    return null;
+  }
+
+  const tour = getTour(id);
+  const images = tour.pictures.map(image =>
+   <View key={image}>
+      <Image style={{flex: 1, width: undefined, height: undefined}} resizeMode="contain" source={image}/>
+    </View>
+   );
+  return (
+    <View style={{flex: 1}}>
+      <View style={{flex: 1}}>
+        <PagerView style={{flex: 1}} initialPage={0}>
+          {images}
+        </PagerView>
+      </View>
+      <View style={{flex: 1}}>
+        <Text>{tour.description}</Text>
+      </View>
+      <View style={{flex: 1}}>
+        <TouchableOpacity onPress={() => navigation.navigate('Map', {locations: tour.locations})}>
+          <Text>Go on tour!</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+};
+
+const TourStack = createStackNavigator();
+function TourStackScreen() {
+  return (
+    <TourStack.Navigator>
+     <TourStack.Screen name="Tour Selection" component={TourList} />            
+     <TourStack.Screen name="CustomTourSettings" component={CustomTourSettings} options={({route}) => ({title: route.params.text})}/>
+     <TourStack.Screen name="TourDescription" component={TourDescription} options={({route}) => ({title: route.params.text})}/>
+    </TourStack.Navigator>
+   );
+ };
 
 export default TourStackScreen;
