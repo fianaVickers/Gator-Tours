@@ -166,6 +166,15 @@ const tours = [
             link: "https://arts.ufl.edu/sites/carillon-studio/welcome/"
           }
         ],
+        destinations: [
+          "Century Tower"
+        ],
+        links: [
+          {
+            text: "Carillon Studio",
+            link: "https://arts.ufl.edu/sites/carillon-studio/welcome/"
+          }
+        ],
         pictures: [
           require("./photos/century_tower2.png"),
           require("./photos/century_tower1.png"),
@@ -206,6 +215,16 @@ const tours = [
         ],
         locations: [
           { latitude: 29.64739, longitude: -82.34803, visited: false }
+        ],
+        links: [
+          {
+            text: "Wertheim Lab Webiste",
+            link: "https://www.eng.ufl.edu/about/new-buildings/herbert-wertheim-laboratory-for-engineering-excellence/"
+          },
+          {
+            text: "HWLEE Prototyping Lab Information",
+            link: "https://www.eng.ufl.edu/eed/facilities/hwlee-prototyping-lab/"
+          }
         ],
         links: [
           {
