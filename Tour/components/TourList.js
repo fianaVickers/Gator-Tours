@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {SectionList, StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {Linking, SectionList, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ToggleButton } from 'react-native-paper';
 import { AsyncStorage, useAsyncStorage } from '@react-native-async-storage/async-storage';
@@ -31,6 +31,30 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
+  tourTitle: {
+    color: '#00529b',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    fontSize: 25,
+    fontWeight: 700,
+    marginLeft: 5,
+    marginTop: 5,
+    flexWrap: 'wrap'
+  },
+  tourSubtitle: {
+    color: '#00529b',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontSize: 20,
+    fontWeight: 700,
+    marginLeft: 5,
+    flexWrap: 'wrap'
+  },
+  linkText: {
+    textDecorationLine: 'underline',
+    color: 'blue',
+    marginHorizontal: 5
+  }
 });
 
 const CustomTourSettings = ({route, navigation}) => {
@@ -193,20 +217,37 @@ const TourDescription = (props) => {
     </View>
    );
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, color: '#faf8f1'}}>
       <View style={{flex: 1}}>
-        <PagerView style={{flex: 1}} initialPage={0}>
-          {images}
-        </PagerView>
+        <Text style={styles.tourTitle}>{tour.text}</Text>
       </View>
-      <View style={{flex: 1}}>
-        <Text>{tour.description}</Text>
+      <View style={{flex:10}}>
+        <View style={{flex: 1}}>
+          <PagerView pageMargin={5} style={{flex: 1, marginLeft: 5, marginRight: 5}} initialPage={0}>
+            {images}
+          </PagerView>
+        </View>
+        <ScrollView style={{flex: 5}}>
+          <View style={{flex: 2}} adjustsFontSizeToFit={true}>
+            <Text style={styles.tourSubtitle}>Description</Text>
+            <Text style={{fontSize: 14, marginHorizontal: 5}}>{tour.description}</Text>
+            <Text style={styles.tourSubtitle}>{"\n"}Destinations</Text>
+            {tour.destinations.map((destination) => {
+              return ( <Text key={destination} style={{marginHorizontal: 5}}>{'\u2022' + destination}</Text> );
+            })}
+            <Text style={styles.tourSubtitle}>{"\n"}Useful Links</Text>  
+            {tour.links.map((link) => {
+              return ( <Text key={link.text} style={styles.linkText} onPress={() => Linking.openURL(link.link)}>{link.text}</Text> );
+            })}
+          </View>
+        </ScrollView> 
       </View>
-      <View style={{flex: 1}}>
-        <TouchableOpacity onPress={() => navigation.navigate('Map', {locations: tour.locations})}>
-          <Text>Go on tour!</Text>
-        </TouchableOpacity>
-      </View>
+      <View style={{flex: 1, justifyContent: 'center'}}>
+          <TouchableOpacity style={{flex: 1, borderRadius: 10, justifyContent: 'center', backgroundColor: '#00529b', marginLeft:5, marginRight: 5, marginTop: 5, marginBottom: 5}} 
+            onPress={() => navigation.navigate('Map', {locations: tour.locations})}>
+            <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Start Tour</Text>
+          </TouchableOpacity>
+        </View>
     </View>
   )
 };
@@ -217,7 +258,7 @@ function TourStackScreen() {
     <TourStack.Navigator>
      <TourStack.Screen name="Tour Selection" component={TourList} />            
      <TourStack.Screen name="CustomTourSettings" component={CustomTourSettings} options={({route}) => ({title: route.params.text})}/>
-     <TourStack.Screen name="TourDescription" component={TourDescription} options={({route}) => ({title: route.params.text})}/>
+     <TourStack.Screen name="TourDescription" component={TourDescription} options={({route}) => ({title: ""})}/>
     </TourStack.Navigator>
    );
  };
