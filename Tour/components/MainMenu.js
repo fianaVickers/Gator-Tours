@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 400,
     height: 100,
+    marginTop: 30
     
   },
   orangeBar: {
@@ -104,7 +105,7 @@ function MainMenuStackScreen() {
    );
  };
 
-const DisplayAnImage = () => {
+const DisplayAnImage = ({ navigation }) => {
   return (
 
     <View >
@@ -129,7 +130,7 @@ const DisplayAnImage = () => {
                 marginTop: 150  
               }}
               titleStyle={{ fontWeight: 'bold' }}
-              onPress={() => console.log('clicked start new tour btn!')}
+              onPress={() => navigation.navigate('TourList')}
             />
 
         <Button
@@ -152,7 +153,7 @@ const DisplayAnImage = () => {
 
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={buttonClickedHandler}
+          onPress={() => navigation.navigate('Alli Chatbot')}
           style={styles.touchableOpacityStyle}>
           <Image
             style={styles.floatingButtonStyle}
