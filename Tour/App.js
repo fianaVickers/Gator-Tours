@@ -27,7 +27,6 @@ function MapStackScreen() {
     { latitude: 29.64567, longitude: -82.34860, visited: false },
     { latitude: 29.6488, longitude: -82.3433, visited: false },
     { latitude: 29.6481, longitude: -82.3437, visited: false },
-    { latitude: 26.065020, longitude: -80.392750, visited: false },
   ];
 
   const [locations, setLocations] = React.useState(initialLocations);
