@@ -99,7 +99,6 @@ const MapComp = ({ route, navigation }) => {
   
     requestLocation();
   }, [locations]);
-  
 
   const onCenterMap = () => {
     mapViewRef.current.animateToRegion({
