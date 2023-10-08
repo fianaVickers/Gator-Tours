@@ -25,13 +25,13 @@ const tours = [
         ],
         locations: [
           // CISE Building
-          { latitude: 29.648365, longitude: -82.344051 },
+          { latitude: 29.648365, longitude: -82.344051, visited: false },
           // NEB
-          { latitude: 29.64233, longitude: -82.34698 },
+          { latitude: 29.64233, longitude: -82.34698, visited: false },
           // Wertheim Lab
-          { latitude: 29.64741, longitude: -82.34804 },
+          { latitude: 29.64741, longitude: -82.34804, visited: false },
           // Malachowsky Hall
-          { latitude: 29.64441, longitude: -82.34773 }
+          { latitude: 29.64441, longitude: -82.34773, visited: false }
         ],
         pictures: [
           require("./photos/cise2.png"),
@@ -61,15 +61,15 @@ const tours = [
         ],
         locations: [
           // Bartram
-          { latitude: 29.64395, longitude: -82.34440 },
+          { latitude: 29.64395, longitude: -82.34440, visited: false },
           // Health Science Center Library
-          { latitude: 29.64094, longitude: -82.34490 },
+          { latitude: 29.64094, longitude: -82.34490, visited: false },
           // Florida Gym
-          { latitude: 29.64951, longitude: -82.34726 },
+          { latitude: 29.64951, longitude: -82.34726, visited: false },
           // Department of Microbiology
-          { latitude: 29.63995, longitude: -82.36263 },
+          { latitude: 29.63995, longitude: -82.36263, visited: false },
           // Scott Family Chemistry Lab
-          { latitude: 29.65156, longitude: -82.34444 },
+          { latitude: 29.65156, longitude: -82.34444, visited: false },
         ],
         pictures: [
           require("./photos/bio1.png"),
@@ -105,15 +105,15 @@ const tours = [
         ],
         locations: [
           // MAE A
-          { latitude: 29.64330, longitude: -82.34827 },
+          { latitude: 29.64330, longitude: -82.34827, visited: false },
           // Particle Research Building
-          { latitude: 29.64162, longitude: -82.34778 },
+          { latitude: 29.64162, longitude: -82.34778, visited: false },
           // MAE C
-          { latitude: 29.64734, longitude: -82.34948 },
+          { latitude: 29.64734, longitude: -82.34948, visited: false },
           // Little Hall
-          { latitude: 29.64882, longitude: -82.34062 },
+          { latitude: 29.64882, longitude: -82.34062, visited: false },
           // Weil Hall
-          { latitude: 29.64838, longitude: -82.34852 },
+          { latitude: 29.64838, longitude: -82.34852, visited: false },
         ],
         pictures: [
           require("./photos/mae1.png"),
@@ -126,7 +126,7 @@ const tours = [
         text: 'Major1',
         description: "Default",
         locations: [
-          { latitude: 10, longitude: -10 },
+          { latitude: 10, longitude: -10, visited: false },
         ],
         pictures: [
           require("./photos/reitz1.png")
@@ -137,7 +137,7 @@ const tours = [
         text: 'Major2',
         description: "Default",
         locations: [
-          { latitude: 10, longitude: -10 },
+          { latitude: 10, longitude: -10, visited: false },
         ],
         pictures: [
           require("./photos/reitz1.png")
@@ -148,7 +148,7 @@ const tours = [
         text: 'Major3',
         description: "Default",
         locations: [
-          { latitude: 10, longitude: -10 },
+          { latitude: 10, longitude: -10, visited: false },
         ],
         pictures: [
           require("./photos/reitz1.png")
@@ -159,7 +159,7 @@ const tours = [
         text: 'Major4',
         description: "Default",
         locations: [
-          { latitude: 10, longitude: -10 },
+          { latitude: 10, longitude: -10, visited: false },
         ],
         pictures: [
           require("./photos/reitz1.png")
@@ -175,7 +175,7 @@ const tours = [
         text: "J. Wayne Reitz Union",
         id: "8",
         description: "The University of Florida's student union is a space for all students to gather, collaborate, and exchange ideas. It is a thriving environment for student activity and a place for self-discovery. The Reitz Union includes an arts and crafts center, the Career Conections Center, the Brown Center for Leadership and Service, Gator 1 Central, the University of Florida Bookstore, many different dining options, and more.",
-        locations: [ { latitude: 29.64567, longitude: -82.3486 } ],
+        locations: [ { latitude: 29.64567, longitude: -82.3486, visited: false } ],
         destinations: [
           "Reitz Union"
         ],
@@ -199,7 +199,7 @@ const tours = [
         id: "9",
         description: "Century Tower is one of the most identifiable features of the University of Florida campus. The tower was conceptualized in 1953 and finished in 1956, and commemorates the 100th anniversary of the founding of the University of Florida in 1853.",
         locations: [
-          { latitude: 29.6488, longitude: -82.3433 }
+          { latitude: 29.6488, longitude: -82.3433, visited: false }
         ],
         destinations: [
           "Century Tower"
@@ -234,7 +234,7 @@ const tours = [
           }
         ],
         locations: [
-          { latitude: 29.64229, longitude: -82.34702 }
+          { latitude: 29.64229, longitude: -82.34702, visited: false }
         ],
         pictures: [
           require("./photos/neb.png"),
@@ -249,7 +249,7 @@ const tours = [
           "Herbert Wertheim Laboratory for Engineering Excellence"
         ],
         locations: [
-          { latitude: 29.64739, longitude: -82.34803 }
+          { latitude: 29.64739, longitude: -82.34803, visited: false }
         ],
         links: [
           {
@@ -280,7 +280,7 @@ const tours = [
           }
         ],
         locations: [
-          { latitude: 29.6481, longitude: -82.34378 }
+          { latitude: 29.6481, longitude: -82.34378, visited: false }
         ],
         pictures: [
           require("./photos/marston.png")
@@ -300,7 +300,7 @@ const tours = [
           }
         ],
         locations: [
-          { latitude: 29.65103, longitude: -82.34288 }
+          { latitude: 29.65103, longitude: -82.34288, visited: false }
         ],
         pictures: [
           require("./photos/west.png")
