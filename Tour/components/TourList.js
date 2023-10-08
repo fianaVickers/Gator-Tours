@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Linking, SectionList, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { ToggleButton } from 'react-native-paper';
-import { AsyncStorage, useAsyncStorage } from '@react-native-async-storage/async-storage';
+import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getTours } from './tour_data/tours.js';
 import PagerView from 'react-native-pager-view';
 
@@ -253,15 +252,4 @@ const TourDescription = (props) => {
   )
 };
 
-const TourStack = createStackNavigator();
-function TourStackScreen() {
-  return (
-    <TourStack.Navigator>
-     <TourStack.Screen name="Tour Selection" component={TourList} />            
-     <TourStack.Screen name="CustomTourSettings" component={CustomTourSettings} options={({route}) => ({title: route.params.text})}/>
-     <TourStack.Screen name="TourDescription" component={TourDescription} options={({route}) => ({title: ""})}/>
-    </TourStack.Navigator>
-   );
- };
-
-export default TourStackScreen;
+export {TourList, CustomTourSettings, TourDescription};

@@ -5,8 +5,6 @@ import Constants from 'expo-constants';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
-import * as Sensors from 'expo-sensors';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 const DEFAULT_LATITUDE = 29.6436; // Approximate latitude for the University of Florida
