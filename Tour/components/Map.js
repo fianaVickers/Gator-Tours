@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { FontAwesome5 } from 'react-native-vector-icons';
 import Constants from 'expo-constants';
 import MapView, { Marker } from 'react-native-maps';
@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
-    padding: 8,
+    paddingTop: 5,
+    marginBottom: 15
   },
   paragraph: {
     margin: 24,
@@ -40,6 +41,24 @@ const styles = StyleSheet.create({
   distance: {
     textAlign: 'center',
     // marginTop: 10,
+  },
+
+  touchableOpacityStyle: {
+    position: 'absolute',
+    width: 50,
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 25,
+    bottom: 10,
+  },
+  floatingButtonStyle: {
+    resizeMode: 'contain',
+    width: 60,
+    height: 60,
+    backgroundColor:'rgba(237,125,49,1.0)',
+    borderRadius: 80,
+    padding: 1,
   },
 });
 
@@ -354,7 +373,7 @@ const MapComp = ({ route, navigation }) => {
           : `Distance: ${distance} m, Duration: ${duration} s`}
       </Text>
 
-      <View style={{ position: 'absolute', bottom: 30, right: 20 }}>
+      <View style={{ position: 'absolute', bottom: 80, right: 350 }}>
         <TouchableOpacity
           onPress={() =>
             mapViewRef.current.animateToRegion({
@@ -379,9 +398,19 @@ const MapComp = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
+      <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Alli Chatbot')}
+          style={styles.touchableOpacityStyle}>
+          <Image
+            style={styles.floatingButtonStyle}
+            source={require('../images/chatIcon.png')}
+          />
+        </TouchableOpacity> 
+
       {!showAllDestinations && (
   <>
-    <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
+    <View style={{ position: 'absolute', bottom: 135, left: 20 }}>
       <TouchableOpacity
         onPress={switchDestination}
         style={{
@@ -396,6 +425,24 @@ const MapComp = ({ route, navigation }) => {
         }}
       >
         <Text>Next Destination</Text>
+      </TouchableOpacity>
+    </View>
+
+    <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('End Tour')}
+        style={{
+          backgroundColor: 'red',
+          borderRadius: 10,
+          padding: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: 'black',
+          shadowOpacity: 0.5,
+          shadowOffset: { width: 5, height: 5 },
+        }}
+      >
+        <Text style={{ color: 'white' }}>End Tour</Text>
       </TouchableOpacity>
     </View>
 

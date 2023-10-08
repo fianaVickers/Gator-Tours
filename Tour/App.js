@@ -8,16 +8,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
-//import React, { useState } from 'react';
-//require('dotenv').config();
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // You can import from local files
 import MapComp from './components/Map';
 import TourStackScreen from './components/TourList';
 import RoomScreen from './components/chatUI';
 import DetailsScreen from './components/Detail';
-
-
+import EndTourScreen from './components/EndTour';
+import MainMenuScreen from './components/MainMenu';
 // or any pure javascript modules available in npm
 //import { Card } from 'react-native-paper';
 
@@ -58,8 +57,6 @@ function ChatStackScreen() {
     </ChatStack.Navigator>
    );
  }
-
-
 
 const Tour = createStackNavigator();
 
@@ -107,10 +104,18 @@ function MyTabs() {
   );
 }
 
+const Stack = createNativeStackNavigator();
+
 export default function App() {
   return (
     <NavigationContainer>
-       <MyTabs />
+       <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={MainMenuScreen} />
+        <Stack.Screen name="Map" component={MapComp} />
+        <Stack.Screen name="TourList" component={TourStackScreen} />
+        <Stack.Screen name="Alli Chatbot" component={RoomScreen} />
+        <Stack.Screen name="End Tour" component={EndTourScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
 
   );
