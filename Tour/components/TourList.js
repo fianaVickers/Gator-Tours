@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Linking, SectionList, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
 import { ToggleButton } from 'react-native-paper';
-import { AsyncStorage, useAsyncStorage } from '@react-native-async-storage/async-storage';
+import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getTours } from './tour_data/tours.js';
 import PagerView from 'react-native-pager-view';
 
