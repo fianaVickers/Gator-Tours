@@ -120,50 +120,6 @@ const tours = [
           require("./photos/mae2.png"),
           require("./photos/mae3.png")
         ]
-      },
-      {
-        id: '4',
-        text: 'Major1',
-        description: "Default",
-        locations: [
-          { latitude: 10, longitude: -10 },
-        ],
-        pictures: [
-          require("./photos/reitz1.png")
-        ]
-      },
-      {
-        id: '5',
-        text: 'Major2',
-        description: "Default",
-        locations: [
-          { latitude: 10, longitude: -10 },
-        ],
-        pictures: [
-          require("./photos/reitz1.png")
-        ]
-      },
-      {
-        id: '6',
-        text: 'Major3',
-        description: "Default",
-        locations: [
-          { latitude: 10, longitude: -10 },
-        ],
-        pictures: [
-          require("./photos/reitz1.png")
-        ]
-      },
-      {
-        id: '7',
-        text: 'Major4',
-        description: "Default",
-        locations: [
-          { latitude: 10, longitude: -10 },
-        ],
-        pictures: [
-          require("./photos/reitz1.png")
-        ]
       }
     ]
   },
