@@ -65,7 +65,7 @@ const MapComp = ({ route, navigation }) => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
+  
       const locationSubscription = await Location.watchPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: 1000,
@@ -74,30 +74,31 @@ const MapComp = ({ route, navigation }) => {
         if (newLocation && newLocation.coords) {
           setLocation(newLocation); // Update location state with the new location
           setOriginLocation(newLocation.coords); // Update origin location state
-         // console.log('New location received:', newLocation); 
-
+          // console.log('New location received:', newLocation); 
         }
       });
-
-       // Watch the device's heading (orientation)
-    const headingSubscription = await Location.watchHeadingAsync((heading) => {
-      // Update the heading state with the magnetic heading
-      setHeading(heading.magHeading);
-    });
-
-    // Clean up location and heading subscriptions when the component unmounts
-    return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-      if (headingSubscription) {
-        headingSubscription.remove();
-      }
+  
+      // Watch the device's heading (orientation)
+      const headingSubscription = await Location.watchHeadingAsync((heading) => {
+        // Update the heading state with the magnetic heading
+        setHeading(heading.magHeading);
+      });
+  
+      setDestinations(locations); // Add this line
+  
+      // Clean up location and heading subscriptions when the component unmounts
+      return () => {
+        if (locationSubscription) {
+          locationSubscription.remove();
+        }
+        if (headingSubscription) {
+          headingSubscription.remove();
+        }
+      };
     };
-  };
-
-  requestLocation();
-  }, []);
+  
+    requestLocation();
+  }, [locations]);
 
   const onCenterMap = () => {
     mapViewRef.current.animateToRegion({
