@@ -6,8 +6,7 @@ import { Entypo } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import ConfettiCannon from 'react-native-confetti-cannon';
 
-    const buttonClickedHandler = () => {
-      console.log('toggle chat bot!');
+    const spamConfetti = () => {
       this.explosion && this.explosion.start();
     };
 
@@ -16,7 +15,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingLeft: 0,
     paddingRight: 0,
-    paddingBottom: 310,
+    paddingBottom: 250,
     fontSize: 50,
     fontWeight: 'bold',
     backgroundColor: 'rgba(255,255,255,1.0)'
@@ -121,18 +120,8 @@ const styles = StyleSheet.create({
 
 });
 
-const TourStack = createStackNavigator();
-function EndTourStackScreen() {
-  return (
-    <EndTourStackScreen.Navigator>
-     <EndTourStackScreen.Screen name="Start New Tour" component={TourList} />            
-     <EndTourStackScreen.Screen name="Continue Tour" component={TourList}/>
-     <EndTourStackScreen.Screen name="ChatBot" component={CustomTourSettings}/>
-    </EndTourStackScreen.Navigator>
-   );
- };
 
-const EndTourScreen = () => {
+const EndTourScreen = ({ navigation }) => {
   return (
 
     <View >
@@ -143,10 +132,10 @@ const EndTourScreen = () => {
         <ConfettiCannon
         count={500}
         origin={{x: -10, y: 0}}
-        autoStart={false}
+        autoStart={true}
         ref={ref => (this.explosion = ref)}
       />
-        <Text style={styles.Header}>Congratulations!</Text>
+        <Text style={styles.Header} onPress={() => spamConfetti()}>Congratulations!</Text>
         <Text style={styles.subHeader}>You Have Completed a Tour!</Text>
         <Text style={styles.subHeaderTwo}>Want to know more? Click the chat bot icon below and Alli can help!</Text>
         <Button
@@ -164,7 +153,7 @@ const EndTourScreen = () => {
                 marginTop: 70  
               }}
               titleStyle={{ fontWeight: 'bold' }}
-              onPress={() => console.log('clicked Go to Main Menu')}
+              onPress={() => navigation.navigate('Home')}
             />
 
         <Button
@@ -187,7 +176,7 @@ const EndTourScreen = () => {
 
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={buttonClickedHandler}
+          onPress={() => navigation.navigate('Alli Chatbot')}
           style={styles.touchableOpacityStyle}>
           <Image
             style={styles.floatingButtonStyle}

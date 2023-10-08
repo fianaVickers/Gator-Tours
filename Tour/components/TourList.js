@@ -100,12 +100,12 @@ const CustomTourSettings = ({route, navigation}) => {
   const submitForm = async () => {
     writeItemToStorage(list);
     const locations = [
-      ...(list.reitzUnion ? [{ latitude: 29.64567, longitude: -82.34860}] : []),
-      ...(list.centuryTower ? [{ latitude: 29.6488, longitude: -82.3433 }] : []),
-      ...(list.newEngineeringBuilding ? [{ latitude: 29.64229, longitude: -82.34702 }] : []),
-      ...(list.wertheimLab ? [{ latitude: 29.64739, longitude: -82.34803 }] : []),
-      ...(list.marston ? [{ latitude: 29.64810, longitude: -82.34378 }] : []),
-      ...(list.libraryWest ? [{ latitude: 29.65103, longitude: -82.34288 }] : []),
+      ...(list.reitzUnion ? [{ latitude: 29.64567, longitude: -82.34860, visited: false}] : []),
+      ...(list.centuryTower ? [{ latitude: 29.6488, longitude: -82.3433, visited: false }] : []),
+      ...(list.newEngineeringBuilding ? [{ latitude: 29.64229, longitude: -82.34702, visited: false }] : []),
+      ...(list.wertheimLab ? [{ latitude: 29.64739, longitude: -82.34803, visited: false }] : []),
+      ...(list.marston ? [{ latitude: 29.64810, longitude: -82.34378, visited: false }] : []),
+      ...(list.libraryWest ? [{ latitude: 29.65103, longitude: -82.34288, visited: false }] : []),
     ];
     navigation.navigate("Map", {locations: locations});
   };
