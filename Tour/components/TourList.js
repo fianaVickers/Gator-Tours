@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 700,
     marginLeft: 5,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    flexShrink: 1
   },
   linkText: {
     textDecorationLine: 'underline',
@@ -218,7 +219,7 @@ const TourDescription = (props) => {
    );
   return (
     <View style={{flex: 1, color: '#faf8f1'}}>
-      <View style={{flex: 1}}>
+      <View style={{flex: 1.5}}>
         <Text style={styles.tourTitle}>{tour.text}</Text>
       </View>
       <View style={{flex:10}}>
