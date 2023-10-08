@@ -8,6 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
+//import React, { useState } from 'react';
 //require('dotenv').config();
 
 // You can import from local files
@@ -22,18 +23,32 @@ import DetailsScreen from './components/Detail';
 
 const MapStack = createStackNavigator();
 function MapStackScreen() {
+  const initialLocations = [
+    { latitude: 29.64567, longitude: -82.34860, visited: false },
+    { latitude: 29.6488, longitude: -82.3433, visited: false },
+    { latitude: 29.6481, longitude: -82.3437, visited: false },
+  ];
+
+  const [locations, setLocations] = React.useState(initialLocations);
+
+  const updateLocations = (updatedLocations) => {
+    setLocations(updatedLocations);
+  };
+
   return (
     <MapStack.Navigator>
-     <MapStack.Screen name="Map" component={MapComp} initialParams={{locations: [
-          { latitude: 29.64567, longitude: -82.34860 },
-          { latitude: 29.6488, longitude: -82.3433 },
-          { latitude: 29.6481, longitude: -82.3437 },
-        ]}}/>            
-     <MapStack.Screen name="Details" component={DetailsScreen} />
+      <MapStack.Screen
+        name="Map"
+        component={MapComp} 
+        initialParams={{
+          locations: initialLocations, // Pass the initialLocations array as a prop
+          updateLocations: updateLocations, // Include the updateLocations function in initialParams
+        }}
+      />
+      <MapStack.Screen name="Details" component={DetailsScreen} />
     </MapStack.Navigator>
-   );
- }
-
+  );
+}
 const ChatStack = createStackNavigator();
 function ChatStackScreen() {
   return (
@@ -100,5 +115,3 @@ export default function App() {
 
   );
 }
-
-

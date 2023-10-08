@@ -9,6 +9,8 @@ import * as Permissions from 'expo-permissions';
 import * as Sensors from 'expo-sensors';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
+const DEFAULT_LATITUDE = 29.6436; // Approximate latitude for the University of Florida
+const DEFAULT_LONGITUDE = -82.3478; // Approximate longitude for the University of Florida
 
 const styles = StyleSheet.create({
   container: {
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MapComp = (props) => {
+const MapComp = ({ route, navigation }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [heading, setHeading] = useState(null);
@@ -50,8 +52,11 @@ const MapComp = (props) => {
   const [currentLocationIndex, setCurrentLocationIndex] = useState(0);
   const mapViewRef = useRef(null);
   const [showAllDestinations, setShowAllDestinations] = useState(false);
-  const { route } = props;
-  const { locations } = route.params;
+  //const { route} = props;
+  const { locations, updateLocations } = route.params;
+  const [originLocation, setOriginLocation] = useState(null); // Add state for origin location
+  const [destinations, setDestinations] = useState(locations);
+
 
   useEffect(() => {
     const requestLocation = async () => {
@@ -65,14 +70,33 @@ const MapComp = (props) => {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: 1000,
         distanceInterval: 1,
-      }, (location => { setLocation(location); }));
+      }, (newLocation) => {
+        if (newLocation && newLocation.coords) {
+          setLocation(newLocation); // Update location state with the new location
+          setOriginLocation(newLocation.coords); // Update origin location state
+         // console.log('New location received:', newLocation); 
 
-      Location.watchHeadingAsync((heading) => {
-        setHeading(heading.magHeading);
+        }
       });
-    };
 
-    requestLocation();
+       // Watch the device's heading (orientation)
+    const headingSubscription = await Location.watchHeadingAsync((heading) => {
+      // Update the heading state with the magnetic heading
+      setHeading(heading.magHeading);
+    });
+
+    // Clean up location and heading subscriptions when the component unmounts
+    return () => {
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+      if (headingSubscription) {
+        headingSubscription.remove();
+      }
+    };
+  };
+
+  requestLocation();
   }, []);
 
   const onCenterMap = () => {
@@ -104,6 +128,86 @@ const MapComp = (props) => {
     );
   }
 
+  //VISITED BUTTON 
+  const handleMarkVisited = (destinationIndex) => {
+    const updatedDestinations = destinations.map((destination, index) => {
+      if (index === destinationIndex) {
+        const destinationCoords = {
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+        };
+
+        const distanceToDestination = calculateDistance(
+          originLocation,
+          destinationCoords
+        );
+
+        if (!isNaN(distanceToDestination)) {
+          const proximityThreshold = 0.01;
+
+          if (distanceToDestination < proximityThreshold) {
+            const updatedDestination = {
+              ...destination,
+              visited: !destination.visited,
+            };
+
+            return updatedDestination;
+          }
+        }
+      }
+      return destination;
+    });
+
+
+    //RENDERING VISITED BUTTON
+
+    const renderNotVisitedButtons = () => {
+      if (!showAllDestinations) {
+        return destinations.map((destination, index) => (
+          <TouchableOpacity
+            onPress={() => handleMarkVisited(index)}
+            style={{
+              backgroundColor: destination.visited ? 'green' : 'red',
+              borderRadius: 10,
+              padding: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: 'black',
+              shadowOpacity: 0.5,
+              shadowOffset: { width: 5, height: 5 },
+              position: 'absolute',
+              top: 20 + index * 60,
+              right: 20,
+            }}
+            key={index}
+          >
+            <Text
+              style={{
+                color: 'white',
+                fontWeight: 'bold',
+                textAlign: 'center', // Center text horizontally
+                textAlignVertical: 'center', // Center text vertically
+              }}
+            >
+              {destination.visited ? 'Visited' : 'Not Visited'}
+            </Text>
+          </TouchableOpacity>
+        ));
+      }
+      return null; // Return null if showAllDestinations is true
+    };
+
+    // Update the destinations state, not locations
+    setDestinations(updatedDestinations);
+
+    // Update the locations using navigation.setOptions
+    navigation.setOptions({
+      params: {
+        ...route.params,
+        locations: updatedDestinations, // Update locations with updatedDestinations
+      },
+    });
+  };
   const rotation = heading !== null ? heading : location.coords?.heading;
 
   //CALCULATIONS
@@ -169,30 +273,27 @@ const MapComp = (props) => {
         ref={mapViewRef}
         style={styles.map}
         initialRegion={{
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          latitude: originLocation?.latitude || DEFAULT_LATITUDE,
+          longitude: originLocation?.longitude || DEFAULT_LONGITUDE,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
         {locations.map((destination, index) => (
-          <Marker key={index} coordinate={destination} />
+          <Marker key={index} coordinate={destination} />          
         ))}
 
         {showAllDestinations && (
           <>
-            {locations.map((destination, index) => (
+            {destinations.map((destination, index) => (
               <MapViewDirections
                 key={index}
-                origin={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                }}
+                origin={originLocation} // Use originLocation state
                 destination={destination}
                 apikey={GOOGLE_MAPS_API_KEY}
                 mode="WALKING"
                 strokeWidth={3}
-                strokeColor={index === closestDestinationIndex && showAllDestinations ? 'red' : 'blue'} // Change color to red for closest route
+                strokeColor={index === closestDestinationIndex && showAllDestinations ? 'orange' : 'blue'} // Change color to orange for closest route
                 onReady={(result) => {
                   const calculatedDistance = (result.distance / 1000).toFixed(2);
                   const calculatedDuration = Math.ceil(result.duration / 60);
@@ -206,10 +307,7 @@ const MapComp = (props) => {
 
         {!showAllDestinations && (
           <MapViewDirections
-            origin={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
+            origin={originLocation} // Use originLocation state
             destination={locations[currentLocationIndex]}
             apikey={GOOGLE_MAPS_API_KEY}
             mode="WALKING"
@@ -223,30 +321,40 @@ const MapComp = (props) => {
             }}
           />
         )}
+
         <Marker
             coordinate={{
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
             }}
             anchor={{ x: 0.5, y: 0.5 }}
-            flat={true}
+            flat
             rotation={heading}
             //icon={require('./assets/arrow.png')}
           >
-            <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 20 }}>
-              <View style={{ backgroundColor: 'blue', width: 15, height: 15, borderRadius: 10 }} />
-            </View>
-          </Marker>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+
+              {/* Orientation beam */}
+              <View style={{ backgroundColor: 'rgba(0, 0, 255, 0.3)', width: 18, height: 20, position: 'absolute', top: 0, left: 5, // Adjust the top position to center the beam with the marker
+                transform: [{ rotate: `${heading}deg` }], // Rotate the beam based on the heading
+              }}
+            />
+            {/* Marker circle */}
+            <View style={{ backgroundColor: 'white', width: 20, height: 20, borderRadius: 10, borderWidth: 4, borderColor: 'blue', // Adjust the border color to match the beam
+              }}
+            />            
+          </View>
+        </Marker>
 
       </MapView>
 
-      <Text style={styles.distance}>
+      <Text style={styles.distance}> 
         {showAllDestinations
           ? `Closest Distance: ${displayDistance} m, Closest Duration: ${displayDuration} s`
           : `Distance: ${distance} m, Duration: ${duration} s`}
       </Text>
 
-      <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+      <View style={{ position: 'absolute', bottom: 30, right: 20 }}>
         <TouchableOpacity
           onPress={() =>
             mapViewRef.current.animateToRegion({
@@ -264,32 +372,67 @@ const MapComp = (props) => {
             justifyContent: 'center',
             shadowColor: 'black',
             shadowOpacity: 0.5,
-            shadowOffset: { width: 5, height: 5 },
+            shadowOffset: { width: 5, height: 5 }, 
           }}
         >
-          <FontAwesome5 name="location-arrow" size={24} color="black" />
+          <FontAwesome5 name="location-arrow" size={24} color="black" /> 
         </TouchableOpacity>
       </View>
 
-      <View style={{ position: 'absolute', bottom: 35, left: 20 }}>
-        <TouchableOpacity
-          onPress={switchDestination}
+      {!showAllDestinations && (
+  <>
+    <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
+      <TouchableOpacity
+        onPress={switchDestination}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 10,
+          padding: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: 'black',
+          shadowOpacity: 0.5,
+          shadowOffset: { width: 5, height: 5 },
+        }}
+      >
+        <Text>Next Destination</Text>
+      </TouchableOpacity>
+    </View>
+
+    {destinations.map((destination, index) => (
+      <TouchableOpacity
+        key={index} // Ensure each button has a unique key
+        onPress={() => handleMarkVisited(index)}
+        style={{
+          backgroundColor: destination.visited ? 'green' : 'red',
+          borderRadius: 10,
+          padding: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: 'black',
+          shadowOpacity: 0.5,
+          shadowOffset: { width: 5, height: 5 },
+          position: 'absolute',
+          top: 20 + index * 60,
+          right: 20,
+        }}
+      >
+        <Text
           style={{
-            backgroundColor: 'white',
-            borderRadius: 10,
-            padding: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            shadowColor: 'black',
-            shadowOpacity: 0.5,
-            shadowOffset: { width: 5, height: 5 },
+            color: 'white',
+            fontWeight: 'bold',
+            textAlign: 'center', // Center text horizontally
+            textAlignVertical: 'center', // Center text vertically
           }}
         >
-          <Text>Next Destination</Text>
-        </TouchableOpacity>
-      </View>
+          {destination.visited ? 'Visited' : 'Not Visited'}
+        </Text>
+      </TouchableOpacity>
+    ))}
+  </>
+)}
 
-      <View style={{ position: 'absolute', top: 20, left: 20 }}>
+      <View style={{ position: 'absolute', top: 10, left: 20 }}>
         <TouchableOpacity
           onPress={() => setShowAllDestinations(!showAllDestinations)}
           style={{
