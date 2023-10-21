@@ -73,6 +73,10 @@ const MapComp = ({ route, navigation }) => {
   const { locations, updateLocations } = route.params;
   const [originLocation, setOriginLocation] = useState(null); // Add state for origin location
   const [destinations, setDestinations] = useState(locations);
+  const [currentNotVisitedIndex, setCurrentNotVisitedIndex] = useState(0);
+  const [locationName, setLocationName] = useState(destinations[currentLocationIndex]?.name || 'No Name'); // Add locationName state
+
+
 
 
   useEffect(() => {
@@ -130,6 +134,14 @@ const MapComp = ({ route, navigation }) => {
     const nextLocationIndex =
       (currentLocationIndex + 1) % locations.length; // Loop through the locations array
     setCurrentLocationIndex(nextLocationIndex);
+    // Toggle the not visited button to the next one
+    setCurrentNotVisitedIndex(nextLocationIndex);
+    if (destinations[nextLocationIndex]) {
+      setLocationName(destinations[nextLocationIndex]?.name || 'No Name');
+    } else {
+      setLocationName('No Name');
+    }
+
   };
 
   if (errorMsg) {
@@ -175,45 +187,6 @@ const MapComp = ({ route, navigation }) => {
       }
       return destination;
     });
-
-
-    //RENDERING VISITED BUTTON
-
-    const renderNotVisitedButtons = () => {
-      if (!showAllDestinations) {
-        return destinations.map((destination, index) => (
-          <TouchableOpacity
-            onPress={() => handleMarkVisited(index)}
-            style={{
-              backgroundColor: destination.visited ? 'green' : 'red',
-              borderRadius: 10,
-              padding: 10,
-              alignItems: 'center',
-              justifyContent: 'center',
-              shadowColor: 'black',
-              shadowOpacity: 0.5,
-              shadowOffset: { width: 5, height: 5 },
-              position: 'absolute',
-              top: 20 + index * 60,
-              right: 20,
-            }}
-            key={index}
-          >
-            <Text
-              style={{
-                color: 'white',
-                fontWeight: 'bold',
-                textAlign: 'center', // Center text horizontally
-                textAlignVertical: 'center', // Center text vertically
-              }}
-            >
-              {destination.visited ? 'Visited' : 'Not Visited'}
-            </Text>
-          </TouchableOpacity>
-        ));
-      }
-      return null; // Return null if showAllDestinations is true
-    };
 
     // Update the destinations state, not locations
     setDestinations(updatedDestinations);
@@ -289,7 +262,7 @@ const MapComp = ({ route, navigation }) => {
     <View style={styles.container}>
       <MapView
         ref={mapViewRef}
-        style={styles.map}
+        style={{ ...styles.map, height: '70%' }}
         initialRegion={{
           latitude: originLocation?.latitude || DEFAULT_LATITUDE,
           longitude: originLocation?.longitude || DEFAULT_LONGITUDE,
@@ -311,8 +284,10 @@ const MapComp = ({ route, navigation }) => {
                 apikey={GOOGLE_MAPS_API_KEY}
                 mode="WALKING"
                 strokeWidth={3}
-                strokeColor={index === closestDestinationIndex && showAllDestinations ? 'orange' : 'blue'} // Change color to orange for closest route
-                onReady={(result) => {
+                strokeColor={
+                  destination.visited ? 'green' : // Green for visited
+                  index === closestDestinationIndex && showAllDestinations ? 'orange' : 'blue'
+                }                onReady={(result) => {
                   const calculatedDistance = (result.distance / 1000).toFixed(2);
                   const calculatedDuration = Math.ceil(result.duration / 60);
                   setDistance(calculatedDistance);
@@ -324,20 +299,24 @@ const MapComp = ({ route, navigation }) => {
         )}
 
         {!showAllDestinations && (
-          <MapViewDirections
-            origin={originLocation} // Use originLocation state
-            destination={locations[currentLocationIndex]}
-            apikey={GOOGLE_MAPS_API_KEY}
-            mode="WALKING"
-            strokeWidth={3}
-            strokeColor="blue"
-            onReady={(result) => {
-              const calculatedDistance = (result.distance / 1000).toFixed(2);
-              const calculatedDuration = Math.ceil(result.duration / 60);
-              setDistance(calculatedDistance);
-              setDuration(calculatedDuration);
+          <>
+          {destinations.map((destination, index) => (
+            <MapViewDirections
+              origin={originLocation} // Use originLocation state
+              destination={locations[currentLocationIndex]}
+              apikey={GOOGLE_MAPS_API_KEY}
+              mode="WALKING"
+              strokeWidth={3}
+              strokeColor= {destination.visited ? 'green' : "blue"}
+              onReady={(result) => {
+                const calculatedDistance = (result.distance / 1000).toFixed(2);
+                const calculatedDuration = Math.ceil(result.duration / 60);
+                setDistance(calculatedDistance);
+                setDuration(calculatedDuration);
             }}
-          />
+            />
+          ))}
+          </>
         )}
 
         <Marker
@@ -369,8 +348,18 @@ const MapComp = ({ route, navigation }) => {
       <Text style={styles.distance}> 
         {showAllDestinations
           ? `Closest Distance: ${displayDistance} m, Closest Duration: ${displayDuration} s`
-          : `Distance: ${distance} m, Duration: ${duration} s`}
+          : `Distance: ${displayDistance} m, Duration: ${displayDuration} s`}
       </Text>
+
+      <View style={{
+        backgroundColor: 'rgba(0,0,250,0.5)', // You can change the color here
+        padding: 10,
+        alignItems: 'center',}}>
+      <Text style={{
+        color: 'white', // You can change the text color here
+        fontSize: 18,
+        }}>Destination: {locationName}</Text>
+    </View>
 
       <View style={{ position: 'absolute', bottom: 80, right: 350 }}>
         <TouchableOpacity
@@ -391,6 +380,7 @@ const MapComp = ({ route, navigation }) => {
             shadowColor: 'black',
             shadowOpacity: 0.5,
             shadowOffset: { width: 5, height: 5 }, 
+            left: 20,
           }}
         >
           <FontAwesome5 name="location-arrow" size={24} color="black" /> 
@@ -459,8 +449,9 @@ const MapComp = ({ route, navigation }) => {
           shadowOpacity: 0.5,
           shadowOffset: { width: 5, height: 5 },
           position: 'absolute',
-          top: 20 + index * 60,
+          top: 20, // + index * 60,
           right: 20,
+          display: index === currentNotVisitedIndex ? 'flex' : 'none', // Display only the button with the currentNotVisitedIndex
         }}
       >
         <Text
