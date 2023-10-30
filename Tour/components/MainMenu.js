@@ -125,7 +125,8 @@ const DisplayAnImage = ({ navigation }) => {
                 width: 250,
                 marginHorizontal: 80, 
                 marginBottom: 20, 
-                marginTop: 150  
+                marginTop: 150,
+                alignSelf: 'center'
               }}
               titleStyle={{ fontWeight: 'bold' }}
               onPress={() => navigation.navigate('TourList')}

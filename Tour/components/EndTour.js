@@ -147,7 +147,8 @@ const EndTourScreen = ({ navigation }) => {
                 width: 250,
                 marginHorizontal: 80, 
                 marginBottom: 20, 
-                marginTop: 70  
+                marginTop: 70,
+                alignSelf: 'center'
               }}
               titleStyle={{ fontWeight: 'bold' }}
               onPress={() => navigation.navigate('Home')}
