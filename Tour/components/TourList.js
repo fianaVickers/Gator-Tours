@@ -5,7 +5,6 @@ import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getTours } from './tour_data/tours.js';
 import PagerView from 'react-native-pager-view';
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -169,7 +168,8 @@ const CustomTourSettings = ({route, navigation}) => {
 
 
 const TourList = (props) => {
-  const {navigation} = props;
+  const {navigation, route} = props;
+  const {setSavedTour} = route.params;
 
   const tours = getTours();
 
@@ -182,7 +182,7 @@ const TourList = (props) => {
           <View style={styles.tourBox}>
             {title == "Custom Tour"
               ? <TouchableOpacity onPress={() => navigation.navigate('CustomTourSettings', {text: item.text, id: item.id})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
-              : <TouchableOpacity onPress={() => navigation.navigate('TourDescription', {text: item.text, id: item.id})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
+              : <TouchableOpacity onPress={() => navigation.navigate('TourDescription', {text: item.text, id: item.id, setSavedTour: setSavedTour})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
             }  
           </View>
         )}
@@ -196,7 +196,7 @@ const TourList = (props) => {
 
 const TourDescription = (props) => {
   const {navigation, route} = props;
-  const {id} = route.params;
+  const {id, setSavedTour} = route.params;
   
   function getTour(id) {
     const tours = getTours();
@@ -244,7 +244,9 @@ const TourDescription = (props) => {
       </View>
       <View style={{flex: 1, justifyContent: 'center'}}>
           <TouchableOpacity style={{flex: 1, borderRadius: 10, justifyContent: 'center', backgroundColor: '#00529b', marginLeft:5, marginRight: 5, marginTop: 5, marginBottom: 5}} 
-            onPress={() => navigation.navigate('Map', {locations: tour.locations})}>
+            onPress={() => {
+              setSavedTour(tour.locations);
+              navigation.navigate('Map', {locations: tour.locations})}}>
             <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Start Tour</Text>
           </TouchableOpacity>
         </View>
