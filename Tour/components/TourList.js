@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
 });
 
 const CustomTourSettings = ({route, navigation}) => {
-  const {id} = route.params;
+  const {id, setSavedTour} = route.params;
 
   const [list, setList] = useState({
     reitzUnion: 'unchecked',
@@ -105,6 +105,7 @@ const CustomTourSettings = ({route, navigation}) => {
       ...(list.marston ? [{ latitude: 29.64810, longitude: -82.34378, visited: false }] : []),
       ...(list.libraryWest ? [{ latitude: 29.65103, longitude: -82.34288, visited: false }] : []),
     ];
+    setSavedTour(locations);
     navigation.navigate("Map", {locations: locations});
   };
 
@@ -181,7 +182,7 @@ const TourList = (props) => {
         renderItem={({item, section: {title}}) =>(
           <View style={styles.tourBox}>
             {title == "Custom Tour"
-              ? <TouchableOpacity onPress={() => navigation.navigate('CustomTourSettings', {text: item.text, id: item.id})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
+              ? <TouchableOpacity onPress={() => navigation.navigate('CustomTourSettings', {text: item.text, id: item.id, setSavedTour: setSavedTour})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
               : <TouchableOpacity onPress={() => navigation.navigate('TourDescription', {text: item.text, id: item.id, setSavedTour: setSavedTour})}><Text style={styles.item}>{item.text}</Text></TouchableOpacity>
             }  
           </View>
