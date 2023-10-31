@@ -5,7 +5,6 @@ import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getTours } from './tour_data/tours.js';
 import PagerView from 'react-native-pager-view';
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
