@@ -1,9 +1,6 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import { Button, ButtonGroup, withTheme} from '@rneui/themed';
-import roundBtn from './roundBtn';
-import { Entypo } from '@expo/vector-icons'; 
-import { createStackNavigator } from '@react-navigation/stack';
+import { Button } from '@rneui/themed';
 import ConfettiCannon from 'react-native-confetti-cannon';
 
     const spamConfetti = () => {
