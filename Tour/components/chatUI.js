@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Avatar, GiftedChat } from 'react-native-gifted-chat';
-var cogBotAPITypes = require('/home/fi20/GatorTours/Gator-Tours/Tour/chatbot/cogBotAPITypes.js').cogBotAPITypes;
+var cogBotAPITypes = require('../chatbot/cogBotAPITypes.js').cogBotAPITypes;
 var cogAPIData = new cogBotAPITypes();
 
 

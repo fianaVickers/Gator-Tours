@@ -6,7 +6,7 @@ import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import { showMessage} from "react-native-flash-message";
-var cogBotAPITypes = require('/home/fi20/GatorTours/Gator-Tours/Tour/chatbot/cogBotAPITypes.js').cogBotAPITypes;
+var cogBotAPITypes = require('../chatbot/cogBotAPITypes.js').cogBotAPITypes;
 var cogAPIData = new cogBotAPITypes();
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
