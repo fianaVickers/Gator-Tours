@@ -9,6 +9,8 @@ import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import FlashMessage from "react-native-flash-message";
+
 
 // You can import from local files
 import MapComp from './components/Map';
@@ -116,7 +118,8 @@ export default function App() {
         <Stack.Screen name="Alli Chatbot" component={RoomScreen} />
         <Stack.Screen name="End Tour" component={EndTourScreen} />
       </Stack.Navigator>
+      <FlashMessage position="center" icon="auto" duration={10000} />
     </NavigationContainer>
-
+    
   );
 }
