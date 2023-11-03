@@ -1,8 +1,6 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import { Button, ButtonGroup, withTheme} from '@rneui/themed';
-import roundBtn from './roundBtn';
-import { Entypo } from '@expo/vector-icons'; 
+import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import { Button } from '@rneui/themed';
 import { createStackNavigator } from '@react-navigation/stack';
 
     const buttonClickedHandler = () => {
