@@ -108,7 +108,7 @@ const CustomTourSettings = ({route, navigation}) => {
       ...(list.miguelHome ? [{ latitude: 26.065020, longitude: -80.392750, visited: false, name: "Miguel's House" }] : []),  //For testing Miguel's House
     ];
     setSavedTour(locations);
-    navigation.navigate("Map", {locations: locations});
+    navigation.navigate("Map", {locations: locations, setSavedTour: setSavedTour});
   };
 
   const reitzToggle = () => {
@@ -257,7 +257,7 @@ const TourDescription = (props) => {
           <TouchableOpacity style={{flex: 1, borderRadius: 10, justifyContent: 'center', backgroundColor: '#00529b', marginLeft:5, marginRight: 5, marginTop: 5, marginBottom: 5}} 
             onPress={() => {
               setSavedTour(tour.locations);
-              navigation.navigate('Map', {locations: tour.locations})}}>
+              navigation.navigate('Map', {locations: tour.locations, setSavedTour: setSavedTour})}}>
             <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Start Tour</Text>
           </TouchableOpacity>
         </View>
