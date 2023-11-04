@@ -74,6 +74,7 @@ const MapComp = ({ route, navigation }) => {
   const [showAllDestinations, setShowAllDestinations] = useState(false);
   //const { route} = props;
   const { locations, updateLocations } = route.params;
+  const { setSavedTour } = route.params;
   const [originLocation, setOriginLocation] = useState(null); // Add state for origin location
   const [destinations, setDestinations] = useState(locations);
   const [currentNotVisitedIndex, setCurrentNotVisitedIndex] = useState(0);
@@ -282,6 +283,9 @@ const MapComp = ({ route, navigation }) => {
     // Update the destinations state, not locations
     setDestinations(updatedDestinations);
 
+    //Update saved tour state
+    setSavedTour(updatedDestinations);
+
     // Update the locations using navigation.setOptions
     navigation.setOptions({
       params: {
@@ -422,11 +426,11 @@ const MapComp = ({ route, navigation }) => {
           >
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
-              {/* Orientation beam */}
+              {/* Orientation beam 
               <View style={{ backgroundColor: 'rgba(0, 0, 255, 0.3)', width: 18, height: 20, position: 'absolute', top: 0, left: 5, // Adjust the top position to center the beam with the marker
                 transform: [{ rotate: `${heading}deg` }], // Rotate the beam based on the heading
               }}
-            />
+            />*/}
             {/* Marker circle */}
             <View style={{ backgroundColor: 'white', width: 20, height: 20, borderRadius: 10, borderWidth: 4, borderColor: 'blue', // Adjust the border color to match the beam
               }}

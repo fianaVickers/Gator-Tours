@@ -11,6 +11,12 @@ import RoomScreen from './components/chatUI';
 import EndTourScreen from './components/EndTour';
 import MainMenuScreen from './components/MainMenu';
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {

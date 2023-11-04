@@ -1,12 +1,8 @@
 import React from 'react';
-import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View, Image, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import { Button } from '@rneui/themed';
-import { createStackNavigator } from '@react-navigation/stack';
-
-    const buttonClickedHandler = () => {
-      console.log('You have been clicked a button!');
-      // do something
-    };
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const styles = StyleSheet.create({
   container: {
@@ -92,21 +88,81 @@ const styles = StyleSheet.create({
 
 });
 
-const TourStack = createStackNavigator();
-function MainMenuStackScreen() {
-  return (
-    <MainMenuStackScreen.Navigator>
-     <MainMenuStackScreen.Screen name="Start New Tour" component={TourList} />            
-     <MainMenuStackScreen.Screen name="Continue Tour" component={TourList}/>
-     <MainMenuStackScreen.Screen name="ChatBot" component={CustomTourSettings}/>
-    </MainMenuStackScreen.Navigator>
-   );
- };
-
 const DisplayAnImage = ({ navigation }) => {
-  return (
+  const [savedTour, setSavedTour] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  useEffect(() => {
+    const getSavedTour = async () => {
+      const jsonVal = await AsyncStorage.getItem('tour');
+      if (jsonVal) setSavedTour(JSON.parse(jsonVal));
+    };
+    getSavedTour();
+  }, []);
+
+  useEffect(() => {
+    const jsonVal = JSON.stringify(savedTour);
+    AsyncStorage.setItem('tour', jsonVal);
+  }, [savedTour]);
+  
+  return (
     <View >
+      <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {setModalVisible(!modalVisible)}}
+        >
+          <View
+            style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                width: 250,
+                height: 30
+            }}>
+            <View
+              style= {{
+                margin: 2,
+                backgroundColor: 'white',
+                borderRadius: 20,
+                padding: 20,
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 5,
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                }}>No tour currently in progess, to get started tap on New Tour!</Text>
+              <Button
+                title="Close"
+                buttonStyle={{
+                  backgroundColor: 'rgba(237,125,49,1.0)',
+                  borderWidth: 2,
+                  borderColor: 'white',
+                  borderRadius: 30,
+                }}
+                containerStyle={{
+                  width: 200,
+                  marginHorizontal: 80, 
+                  marginBottom: 20, 
+                  marginTop: 150,
+                  alignSelf: 'center'
+                }}
+                onPress={() => setModalVisible(!modalVisible)}
+              />
+            </View>
+          </View>
+        </Modal>
         <View style={styles.container}> 
 
         <View> 
@@ -125,10 +181,11 @@ const DisplayAnImage = ({ navigation }) => {
                 width: 250,
                 marginHorizontal: 80, 
                 marginBottom: 20, 
-                marginTop: 150  
+                marginTop: 150,
+                alignSelf: 'center'
               }}
               titleStyle={{ fontWeight: 'bold' }}
-              onPress={() => navigation.navigate('TourList')}
+              onPress={() => navigation.navigate('TourList', { setSavedTour: (setSavedTour)})}
             />
 
         <Button
@@ -145,7 +202,7 @@ const DisplayAnImage = ({ navigation }) => {
                 marginTop: 20 
               }}
               titleStyle={{ fontWeight: 'bold' }}
-              onPress={() => console.log('clicked start continue tour btn!')}
+              onPress={savedTour != null ? () => navigation.navigate('Map', {locations: savedTour, setSavedTour: (setSavedTour)}) : () => setModalVisible(!modalVisible)}
             />
         </View>
 

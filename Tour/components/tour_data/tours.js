@@ -25,13 +25,13 @@ const tours = [
         ],
         locations: [
           // CISE Building
-          { latitude: 29.648365, longitude: -82.344051, visited: false },
+          { latitude: 29.648365, longitude: -82.344051, visited: false, name: "CISE Building" },
           // NEB
-          { latitude: 29.64233, longitude: -82.34698, visited: false },
+          { latitude: 29.64233, longitude: -82.34698, visited: false, name: "New Engineering Building" },
           // Wertheim Lab
-          { latitude: 29.64741, longitude: -82.34804, visited: false },
+          { latitude: 29.64741, longitude: -82.34804, visited: false, name: "Wertheim Lab" },
           // Malachowsky Hall
-          { latitude: 29.64441, longitude: -82.34773, visited: false }
+          { latitude: 29.64441, longitude: -82.34773, visited: false, name: "Malachowsky Hall" }
         ],
         pictures: [
           require("./photos/cise2.png"),
@@ -61,15 +61,15 @@ const tours = [
         ],
         locations: [
           // Bartram
-          { latitude: 29.64395, longitude: -82.34440, visited: false },
+          { latitude: 29.64395, longitude: -82.34440, visited: false, name: "Bartram-Carr Hall" },
           // Health Science Center Library
-          { latitude: 29.64094, longitude: -82.34490, visited: false },
+          { latitude: 29.64094, longitude: -82.34490, visited: false, name: "Health Science Center Library" },
           // Florida Gym
-          { latitude: 29.64951, longitude: -82.34726, visited: false },
+          { latitude: 29.64951, longitude: -82.34726, visited: false, name: "Florida Gym" },
           // Department of Microbiology
-          { latitude: 29.63995, longitude: -82.36263, visited: false },
+          { latitude: 29.63995, longitude: -82.36263, visited: false, name: "Department of Microbiology" },
           // Scott Family Chemistry Lab
-          { latitude: 29.65156, longitude: -82.34444, visited: false },
+          { latitude: 29.65156, longitude: -82.34444, visited: false, name: "Scott Family Chemistry Lab" },
         ],
         pictures: [
           require("./photos/bio1.png"),
@@ -105,15 +105,15 @@ const tours = [
         ],
         locations: [
           // MAE A
-          { latitude: 29.64330, longitude: -82.34827, visited: false },
+          { latitude: 29.64330, longitude: -82.34827, visited: false, name: "Mechanical and Aerospace Engineering Building A" },
           // Particle Research Building
-          { latitude: 29.64162, longitude: -82.34778, visited: false },
+          { latitude: 29.64162, longitude: -82.34778, visited: false, name: "Particle Research Building" },
           // MAE C
-          { latitude: 29.64734, longitude: -82.34948, visited: false },
+          { latitude: 29.64734, longitude: -82.34948, visited: false, name: "Mechanical and Aerospace Engineering Building C" },
           // Little Hall
-          { latitude: 29.64882, longitude: -82.34062, visited: false },
+          { latitude: 29.64882, longitude: -82.34062, visited: false, name: "Little Hall" },
           // Weil Hall
-          { latitude: 29.64838, longitude: -82.34852, visited: false },
+          { latitude: 29.64838, longitude: -82.34852, visited: false, name: "Weil Hall" },
         ],
         pictures: [
           require("./photos/mae1.png"),
@@ -131,7 +131,7 @@ const tours = [
         text: "J. Wayne Reitz Union",
         id: "8",
         description: "The University of Florida's student union is a space for all students to gather, collaborate, and exchange ideas. It is a thriving environment for student activity and a place for self-discovery. The Reitz Union includes an arts and crafts center, the Career Conections Center, the Brown Center for Leadership and Service, Gator 1 Central, the University of Florida Bookstore, many different dining options, and more.",
-        locations: [ { latitude: 29.64567, longitude: -82.3486, visited: false } ],
+        locations: [ { latitude: 29.64567, longitude: -82.3486, visited: false, name: "Reitz Union"  } ],
         destinations: [
           "Reitz Union"
         ],
@@ -155,7 +155,16 @@ const tours = [
         id: "9",
         description: "Century Tower is one of the most identifiable features of the University of Florida campus. The tower was conceptualized in 1953 and finished in 1956, and commemorates the 100th anniversary of the founding of the University of Florida in 1853.",
         locations: [
-          { latitude: 29.6488, longitude: -82.3433, visited: false }
+          { latitude: 29.6488, longitude: -82.3433, visited: false, name: "Century Tower" }
+        ],
+        destinations: [
+          "Century Tower"
+        ],
+        links: [
+          {
+            text: "Carillon Studio",
+            link: "https://arts.ufl.edu/sites/carillon-studio/welcome/"
+          }
         ],
         destinations: [
           "Century Tower"
@@ -190,7 +199,7 @@ const tours = [
           }
         ],
         locations: [
-          { latitude: 29.64229, longitude: -82.34702, visited: false }
+          { latitude: 29.64229, longitude: -82.34702, visited: false, name: "New Engineering Building"  }
         ],
         pictures: [
           require("./photos/neb.png"),
@@ -205,7 +214,17 @@ const tours = [
           "Herbert Wertheim Laboratory for Engineering Excellence"
         ],
         locations: [
-          { latitude: 29.64739, longitude: -82.34803, visited: false }
+          { latitude: 29.64739, longitude: -82.34803, visited: false, name: "Herbert Wertheim Laboratory" }
+        ],
+        links: [
+          {
+            text: "Wertheim Lab Webiste",
+            link: "https://www.eng.ufl.edu/about/new-buildings/herbert-wertheim-laboratory-for-engineering-excellence/"
+          },
+          {
+            text: "HWLEE Prototyping Lab Information",
+            link: "https://www.eng.ufl.edu/eed/facilities/hwlee-prototyping-lab/"
+          }
         ],
         links: [
           {
@@ -236,7 +255,7 @@ const tours = [
           }
         ],
         locations: [
-          { latitude: 29.6481, longitude: -82.34378, visited: false }
+          { latitude: 29.6481, longitude: -82.34378, visited: false, name: "Marston Science Library" }
         ],
         pictures: [
           require("./photos/marston.png")
@@ -256,7 +275,7 @@ const tours = [
           }
         ],
         locations: [
-          { latitude: 29.65103, longitude: -82.34288, visited: false }
+          { latitude: 29.65103, longitude: -82.34288, visited: false, name: "Library West" }
         ],
         pictures: [
           require("./photos/west.png")
