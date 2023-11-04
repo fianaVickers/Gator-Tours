@@ -5,6 +5,9 @@ import Constants from 'expo-constants';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
+import { showMessage} from "react-native-flash-message";
+var cogBotAPITypes = require('../chatbot/cogBotAPITypes.js').cogBotAPITypes;
+var cogAPIData = new cogBotAPITypes();
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 const DEFAULT_LATITUDE = 29.6436; // Approximate latitude for the University of Florida
@@ -47,8 +50,8 @@ const styles = StyleSheet.create({
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    right: 25,
-    bottom: 10,
+    right: 20,
+    bottom: 55,
   },
   floatingButtonStyle: {
     resizeMode: 'contain',
@@ -73,6 +76,10 @@ const MapComp = ({ route, navigation }) => {
   const { locations, updateLocations } = route.params;
   const [originLocation, setOriginLocation] = useState(null); // Add state for origin location
   const [destinations, setDestinations] = useState(locations);
+  const [currentNotVisitedIndex, setCurrentNotVisitedIndex] = useState(0);
+  const [locationName, setLocationName] = useState(destinations[currentLocationIndex]?.name || 'No Name'); // Add locationName state
+
+
 
 
   useEffect(() => {
@@ -130,6 +137,102 @@ const MapComp = ({ route, navigation }) => {
     const nextLocationIndex =
       (currentLocationIndex + 1) % locations.length; // Loop through the locations array
     setCurrentLocationIndex(nextLocationIndex);
+    // Toggle the not visited button to the next one
+    setCurrentNotVisitedIndex(nextLocationIndex);
+    if (destinations[nextLocationIndex]) {
+      setLocationName(destinations[nextLocationIndex]?.name || 'No Name');
+      sendRequestToApi(destinations[nextLocationIndex]?.name).then((response) => {
+        //go though all generic objects
+        for (let i = 0; i < response.output.generic.length; i++){
+          let genRes = response.output.generic[i]
+          //console.log(genRes) 
+          //check response type 
+          if (genRes.response_type == "text"){
+            //return the text output response
+            let giftChatApiRes = ""
+            console.log("raw rsponse ---->" + genRes.text)
+            if (tagsPresent(genRes.text)){
+              //console.log("tags have been found! ...")
+              link = ""
+              linkMsg = " Follow this link to learn more! "
+              if (genRes.text.includes("a href=")){
+                link = linkMsg + retrieveLink(genRes.text)
+              }
+  
+              let tempStr = genRes.text.replace(/(<([^>]+)>)/gi, "")
+              giftChatApiRes = tempStr + link
+  
+            }else{
+              //console.log("No tags found here: " + genRes.text)
+              giftChatApiRes = genRes.text
+            }
+            //console.log("\n\n")
+  
+            const messTemp = {
+              _id: Math.floor(Math.random() * 10000),
+              text: giftChatApiRes,
+              createdAt: new Date().getTime(),
+              user: {
+                _id: 2,
+                name: 'Alli Gator',
+                avatar : 'https://cms.mc-cap1.cogability.net/uf/Alli-Gator-1.png',
+              }
+            }
+
+            showMessage({
+              message: "Check out this cool information I found about your latest tour stop!",
+              description: messTemp.text + "\n\n"+ "press me and i'll be quite for a bit!",
+              type: "info",
+              backgroundColor: 'rgba(237,125,49,1.0)',
+              color: "#ffffff",
+              icon: props => <Image source={{uri:'https://cms.mc-cap1.cogability.net/uf/Alli-Gator-1.png',}} {...props} />,
+              onPress: () => {
+                console.log("alli has ben silenced!")
+              },
+            });
+
+            
+          }else if (genRes.response_type == "search"){
+            let formatedResults = ""
+            for (let j = 0; j < genRes.results.length; j++){
+              formatedResults = formatedResults + formatResults(genRes.results[j]) + "\n"
+            }
+            console.log("These are the formated results: \n" + formatedResults)
+  
+            const formatMsgTemplate = {
+              _id: Math.floor(Math.random() * 10000),
+              text: formatedResults,
+              createdAt: new Date().getTime(),
+              user: {
+                _id: 2,
+                name: 'Alli Gator',
+                avatar : 'https://cms.mc-cap1.cogability.net/uf/Alli-Gator-1.png',
+              }
+            }
+  
+            console.log("Message was: " + formatMsgTemplate)
+
+            showMessage({
+              message:"Check out this cool information I found about your latest tour stop!",
+              description: formatMsgTemplate.text + "\n\n"+ "press me and i'll be quiet!",
+              type: "info",
+              backgroundColor: 'rgba(237,125,49,1.0)',
+              color: "#ffffff",
+              icon: props => <Image source={{uri:'https://cms.mc-cap1.cogability.net/uf/Alli-Gator-1.png',}} {...props} />,
+              onPress: () => {
+                console.log("alli has ben silenced!")
+              },
+            });
+
+          } 
+        } 
+        
+      })
+
+    } else {
+      setLocationName('No Name');
+    }
+
   };
 
   if (errorMsg) {
@@ -175,45 +278,6 @@ const MapComp = ({ route, navigation }) => {
       }
       return destination;
     });
-
-
-    //RENDERING VISITED BUTTON
-
-    const renderNotVisitedButtons = () => {
-      if (!showAllDestinations) {
-        return destinations.map((destination, index) => (
-          <TouchableOpacity
-            onPress={() => handleMarkVisited(index)}
-            style={{
-              backgroundColor: destination.visited ? 'green' : 'red',
-              borderRadius: 10,
-              padding: 10,
-              alignItems: 'center',
-              justifyContent: 'center',
-              shadowColor: 'black',
-              shadowOpacity: 0.5,
-              shadowOffset: { width: 5, height: 5 },
-              position: 'absolute',
-              top: 20 + index * 60,
-              right: 20,
-            }}
-            key={index}
-          >
-            <Text
-              style={{
-                color: 'white',
-                fontWeight: 'bold',
-                textAlign: 'center', // Center text horizontally
-                textAlignVertical: 'center', // Center text vertically
-              }}
-            >
-              {destination.visited ? 'Visited' : 'Not Visited'}
-            </Text>
-          </TouchableOpacity>
-        ));
-      }
-      return null; // Return null if showAllDestinations is true
-    };
 
     // Update the destinations state, not locations
     setDestinations(updatedDestinations);
@@ -289,7 +353,7 @@ const MapComp = ({ route, navigation }) => {
     <View style={styles.container}>
       <MapView
         ref={mapViewRef}
-        style={styles.map}
+        style={{ ...styles.map, height: '70%' }}
         initialRegion={{
           latitude: originLocation?.latitude || DEFAULT_LATITUDE,
           longitude: originLocation?.longitude || DEFAULT_LONGITUDE,
@@ -311,8 +375,10 @@ const MapComp = ({ route, navigation }) => {
                 apikey={GOOGLE_MAPS_API_KEY}
                 mode="WALKING"
                 strokeWidth={3}
-                strokeColor={index === closestDestinationIndex && showAllDestinations ? 'orange' : 'blue'} // Change color to orange for closest route
-                onReady={(result) => {
+                strokeColor={
+                  destination.visited ? 'green' : // Green for visited
+                  index === closestDestinationIndex && showAllDestinations ? 'orange' : 'blue'
+                }                onReady={(result) => {
                   const calculatedDistance = (result.distance / 1000).toFixed(2);
                   const calculatedDuration = Math.ceil(result.duration / 60);
                   setDistance(calculatedDistance);
@@ -324,20 +390,24 @@ const MapComp = ({ route, navigation }) => {
         )}
 
         {!showAllDestinations && (
-          <MapViewDirections
-            origin={originLocation} // Use originLocation state
-            destination={locations[currentLocationIndex]}
-            apikey={GOOGLE_MAPS_API_KEY}
-            mode="WALKING"
-            strokeWidth={3}
-            strokeColor="blue"
-            onReady={(result) => {
-              const calculatedDistance = (result.distance / 1000).toFixed(2);
-              const calculatedDuration = Math.ceil(result.duration / 60);
-              setDistance(calculatedDistance);
-              setDuration(calculatedDuration);
+          <>
+          {destinations.map((destination, index) => (
+            <MapViewDirections
+              origin={originLocation} // Use originLocation state
+              destination={locations[currentLocationIndex]}
+              apikey={GOOGLE_MAPS_API_KEY}
+              mode="WALKING"
+              strokeWidth={3}
+              strokeColor= {destination.visited ? 'green' : "blue"}
+              onReady={(result) => {
+                const calculatedDistance = (result.distance / 1000).toFixed(2);
+                const calculatedDuration = Math.ceil(result.duration / 60);
+                setDistance(calculatedDistance);
+                setDuration(calculatedDuration);
             }}
-          />
+            />
+          ))}
+          </>
         )}
 
         <Marker
@@ -369,10 +439,20 @@ const MapComp = ({ route, navigation }) => {
       <Text style={styles.distance}> 
         {showAllDestinations
           ? `Closest Distance: ${displayDistance} m, Closest Duration: ${displayDuration} s`
-          : `Distance: ${distance} m, Duration: ${duration} s`}
+          : `Distance: ${displayDistance} m, Duration: ${displayDuration} s`}
       </Text>
 
-      <View style={{ position: 'absolute', bottom: 80, right: 350 }}>
+      <View style={{
+        backgroundColor: 'rgba(0,0,250,0.5)', // You can change the color here
+        padding: 10,
+        alignItems: 'center',}}>
+      <Text style={{
+        color: 'white', // You can change the text color here
+        fontSize: 18,
+        }}>Destination: {locationName}</Text>
+    </View>
+
+      <View style={{ position: 'absolute', bottom: 130, right: 350 }}>
         <TouchableOpacity
           onPress={() =>
             mapViewRef.current.animateToRegion({
@@ -391,6 +471,7 @@ const MapComp = ({ route, navigation }) => {
             shadowColor: 'black',
             shadowOpacity: 0.5,
             shadowOffset: { width: 5, height: 5 }, 
+            left: 20,
           }}
         >
           <FontAwesome5 name="location-arrow" size={24} color="black" /> 
@@ -409,7 +490,7 @@ const MapComp = ({ route, navigation }) => {
 
       {!showAllDestinations && (
   <>
-    <View style={{ position: 'absolute', bottom: 135, left: 20 }}>
+    <View style={{ position: 'absolute', bottom: 185, left: 20 }}>
       <TouchableOpacity
         onPress={switchDestination}
         style={{
@@ -427,7 +508,7 @@ const MapComp = ({ route, navigation }) => {
       </TouchableOpacity>
     </View>
 
-    <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
+    <View style={{ position: 'absolute', bottom: 80, left: 20 }}>
       <TouchableOpacity
         onPress={() => navigation.navigate('End Tour')}
         style={{
@@ -459,8 +540,9 @@ const MapComp = ({ route, navigation }) => {
           shadowOpacity: 0.5,
           shadowOffset: { width: 5, height: 5 },
           position: 'absolute',
-          top: 20 + index * 60,
+          top: 20, // + index * 60,
           right: 20,
+          display: index === currentNotVisitedIndex ? 'flex' : 'none', // Display only the button with the currentNotVisitedIndex
         }}
       >
         <Text
@@ -500,3 +582,68 @@ const MapComp = ({ route, navigation }) => {
 };
 
 export default MapComp;
+
+
+function sendRequestToApi(message){
+  return fetch(cogAPIData.CogbotURL,
+  {
+    method: cogAPIData.POSTstr,
+    headers: {
+      'Content-Type': cogAPIData.hdrContentValue,
+       'Accept': cogAPIData.hdrAcceptValue,
+      'Authorization': cogAPIData.hrdAuthValue,
+    },
+    body: JSON.stringify(
+      {
+          "input" : {"text" : message}
+      }
+    ),
+  })
+  .then((response) => response.json())
+  .then((responseData) => {
+    return responseData;
+  })
+  .catch(error => console.warn(error));
+}
+
+function tagsPresent(apiStr){
+  var startIndex = 0
+  var endIndex = 0 
+  var hasTags = false
+  
+  for (let i = 0; i < apiStr.length; i++){
+      
+      var currChar = apiStr.charAt(i)
+      if (currChar == "<"){
+        startIndex = i
+        continue 
+      }else if (currChar == ">"){
+        hasTags = true
+        break 
+      }
+  }
+  return hasTags
+}
+
+
+function formatResults(resultObj){
+  let formatedResStr = "Title: " + resultObj.title 
+  formatedResStr = formatedResStr + "\n" + "Summary: "+ resultObj.overview 
+  formatedResStr = formatedResStr + "\n" + "click link for more information: "+ resultObj.url +"\n"
+  return formatedResStr
+}
+
+function retrieveLink(apiRes){
+
+  linkStr = "a href="
+    if (apiRes.includes("a href=")){
+      index = apiRes.indexOf(linkStr)
+      index = index+linkStr.length+1
+      console.log(index + " char at index: " + apiRes.charAt(index))
+      indexLinkEnd = apiRes.indexOf("\"", index)
+      console.log(indexLinkEnd + " char at index: " + apiRes.charAt(indexLinkEnd))
+      console.log(apiRes.substring(index, indexLinkEnd))
+      return apiRes.substring(index, indexLinkEnd)
+    }
+
+}

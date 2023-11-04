@@ -82,7 +82,8 @@ const CustomTourSettings = ({route, navigation}) => {
         newEngineeringBuilding: false,
         wertheimLab: false,
         marston: false,
-        libraryWest: false
+        libraryWest: false,
+        miguelHome: false //Miguel's Home
       });
     }
   };
@@ -99,12 +100,13 @@ const CustomTourSettings = ({route, navigation}) => {
   const submitForm = async () => {
     writeItemToStorage(list);
     const locations = [
-      ...(list.reitzUnion ? [{ latitude: 29.64567, longitude: -82.34860, visited: false}] : []),
-      ...(list.centuryTower ? [{ latitude: 29.6488, longitude: -82.3433, visited: false }] : []),
-      ...(list.newEngineeringBuilding ? [{ latitude: 29.64229, longitude: -82.34702, visited: false }] : []),
-      ...(list.wertheimLab ? [{ latitude: 29.64739, longitude: -82.34803, visited: false }] : []),
-      ...(list.marston ? [{ latitude: 29.64810, longitude: -82.34378, visited: false }] : []),
-      ...(list.libraryWest ? [{ latitude: 29.65103, longitude: -82.34288, visited: false }] : []),
+      ...(list.reitzUnion ? [{ latitude: 29.64567, longitude: -82.34860, visited: false, name: "Reitz Union"}] : []),
+      ...(list.centuryTower ? [{ latitude: 29.6488, longitude: -82.3433, visited: false, name: "Century Tower" }] : []),
+      ...(list.newEngineeringBuilding ? [{ latitude: 29.64229, longitude: -82.34702, visited: false, name: "New Engineering Building" }] : []),
+      ...(list.wertheimLab ? [{ latitude: 29.64739, longitude: -82.34803, visited: false, name: "Wertheim Lab" }] : []),
+      ...(list.marston ? [{ latitude: 29.64810, longitude: -82.34378, visited: false, name: "Marston" }] : []),
+      ...(list.libraryWest ? [{ latitude: 29.65103, longitude: -82.34288, visited: false, name: "Library West" }] : []),
+      ...(list.miguelHome ? [{ latitude: 26.065020, longitude: -80.392750, visited: false, name: "Miguel's House" }] : []),  //For testing Miguel's House
     ];
     navigation.navigate("Map", {locations: locations});
   };
@@ -133,6 +135,10 @@ const CustomTourSettings = ({route, navigation}) => {
     setList({...list, libraryWest: !list.libraryWest});
   };
 
+  const miguelHomeToggle = () => {
+    setList({...list, miguelHome: !list.miguelHome});
+  };
+
   return (
   <View style = {{flex: 1, flexDirection: 'column', paddingHorizontal: 10}}>
     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
@@ -158,6 +164,10 @@ const CustomTourSettings = ({route, navigation}) => {
     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
       <ToggleButton icon='check' onPress={libraryWestToggle} status={list.libraryWest?'checked':'unchecked'}/>
       <Text style={styles.item}>Library West</Text>
+    </View>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+      <ToggleButton icon='check' onPress={miguelHomeToggle} status={list.miguelHome?'checked':'unchecked'}/>
+      <Text style={styles.item}>Miguel's House</Text>
     </View>
     <TouchableOpacity onPress={submitForm} title='submit' type='outline' color='#3275a8' style={{alignItems: 'center', backgroundColor: '#03befc', padding: 10}}>
       <Text>Submit</Text>
