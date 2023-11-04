@@ -202,7 +202,7 @@ const DisplayAnImage = ({ navigation }) => {
                 marginTop: 20 
               }}
               titleStyle={{ fontWeight: 'bold' }}
-              onPress={savedTour != null ? () => navigation.navigate('Map', {locations: savedTour}) : () => setModalVisible(!modalVisible)}
+              onPress={savedTour != null ? () => navigation.navigate('Map', {locations: savedTour, setSavedTour: (setSavedTour)}) : () => setModalVisible(!modalVisible)}
             />
         </View>
 
