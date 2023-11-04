@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import FlashMessage from "react-native-flash-message";
+
 
 // Local Imports
 import MapComp from './components/Map';
@@ -29,6 +31,8 @@ export default function App() {
         <Stack.Screen name="Alli Chatbot" component={RoomScreen} />
         <Stack.Screen name="End Tour" component={EndTourScreen} />
       </Stack.Navigator>
+      <FlashMessage position="center" icon="auto" duration={10000} />
     </NavigationContainer>
+    
   );
 }
