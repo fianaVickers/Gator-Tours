@@ -168,6 +168,23 @@ android {
     }
 }
 
+    buildscript {
+    ext {
+        kotlinVersion = project.hasProperty('kotlin.version') ? project['kotlin.version'] : '1.5.20'
+    }
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        // classpath 'com.android.tools.build:gradle:4.2.2'
+        // classpath 'com.facebook.react:react-native:+' // Use the version you are currently using
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
 // Accepts values in comma delimited lists, example:
 // android.packagingOptions.pickFirsts=/LICENSE,**/picasa.ini
