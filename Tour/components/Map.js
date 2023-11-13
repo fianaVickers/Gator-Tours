@@ -550,6 +550,7 @@ const MapComp = ({ route, navigation }) => {
         }}
       >
         <Text
+          key={index}
           style={{
             color: 'white',
             fontWeight: 'bold',
