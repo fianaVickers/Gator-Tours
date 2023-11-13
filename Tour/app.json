@@ -15,13 +15,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.f.vickers.gatortourcomputerengineeringdesign2023"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.f.vickers.gatortourcomputerengineeringdesign2023"
     },
     "web": {
       "favicon": "./assets/favicon.png"
