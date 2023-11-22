@@ -105,11 +105,11 @@ const tours = [
         ],
         locations: [
           // MAE A
-          { latitude: 29.64330, longitude: -82.34827, visited: false, name: "Mechanical and Aerospace Engineering Building A" },
+          { latitude: 29.64330, longitude: -82.34827, visited: false, name: "MAE A" },
           // Particle Research Building
           { latitude: 29.64162, longitude: -82.34778, visited: false, name: "Particle Research Building" },
           // MAE C
-          { latitude: 29.64734, longitude: -82.34948, visited: false, name: "Mechanical and Aerospace Engineering Building C" },
+          { latitude: 29.64734, longitude: -82.34948, visited: false, name: "MAE C" },
           // Little Hall
           { latitude: 29.64882, longitude: -82.34062, visited: false, name: "Little Hall" },
           // Weil Hall
