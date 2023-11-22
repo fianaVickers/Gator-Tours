@@ -1,7 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import FlashMessage from "react-native-flash-message";
+import { PaperProvider } from 'react-native-paper';
 
 
 // Local Imports
@@ -10,17 +11,16 @@ import { TourList, CustomTourSettings, TourDescription } from './components/Tour
 import RoomScreen from './components/chatUI';
 import EndTourScreen from './components/EndTour';
 import MainMenuScreen from './components/MainMenu';
-
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
 ]);
-
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+  <PaperProvider>
     <NavigationContainer>
        <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={MainMenuScreen} />
@@ -33,6 +33,7 @@ export default function App() {
       </Stack.Navigator>
       <FlashMessage position="center" icon="auto" duration={10000} />
     </NavigationContainer>
+  </PaperProvider>
     
   );
 }

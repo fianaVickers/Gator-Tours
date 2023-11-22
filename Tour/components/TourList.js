@@ -5,6 +5,7 @@ import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getTours } from './tour_data/tours.js';
 import PagerView from 'react-native-pager-view';
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -16,12 +17,14 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'rgba(237,125,49,1.0)',
     backgroundColor: 'rgba(247,247,247,1.0)',
   },
   item: {
     padding: 15,
     fontSize: 18,
     height: 70,
+    color: '#000000',
   },
   tourBox: {
     flexDirection: 'row',
@@ -34,7 +37,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1.5,
     fontSize: 25,
-    fontWeight: 700,
+    fontWeight: '700',
     marginLeft: 5,
     marginTop: 5,
     flexWrap: 'wrap'
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     fontSize: 20,
-    fontWeight: 700,
+    fontWeight: '700',
     marginLeft: 5,
     flexWrap: 'wrap',
     flexShrink: 1
@@ -141,37 +144,42 @@ const CustomTourSettings = ({route, navigation}) => {
 
   return (
   <View style = {{flex: 1, flexDirection: 'column', paddingHorizontal: 10}}>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={reitzToggle} status={list.reitzUnion?'checked':'unchecked'}/>
-      <Text style={styles.item}>Reitz Union</Text>
-    </View>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={centuryTowerToggle} status={list.centuryTower?'checked':'unchecked'}/>
-      <Text style={styles.item}>Century Tower</Text>
-    </View>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={newEngineeringBuildingToggle} status={list.newEngineeringBuilding?'checked':'unchecked'}/>
-      <Text style={styles.item}>New Engineering Building</Text>
-    </View>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={wertheimLabToggle} status={list.wertheimLab?'checked':'unchecked'}/>
-      <Text style={styles.item}>Herbert Wertheim Laboratory for Engineering Excellence</Text>
-    </View>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={marstonToggle} status={list.marston?'checked':'unchecked'}/>
-      <Text style={styles.item}>Marston Science Library</Text>
-    </View>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={libraryWestToggle} status={list.libraryWest?'checked':'unchecked'}/>
-      <Text style={styles.item}>Library West</Text>
-    </View>
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
-      <ToggleButton icon='check' onPress={miguelHomeToggle} status={list.miguelHome?'checked':'unchecked'}/>
-      <Text style={styles.item}>Miguel's House</Text>
-    </View>
-    <TouchableOpacity onPress={submitForm} title='submit' type='outline' color='#3275a8' style={{alignItems: 'center', backgroundColor: '#03befc', padding: 10}}>
-      <Text>Submit</Text>
-    </TouchableOpacity>
+      <View style = {{flex: 10}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={reitzToggle} status={list.reitzUnion?'checked':'unchecked'}/>
+          <Text style={styles.item}>Reitz Union</Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={centuryTowerToggle} status={list.centuryTower?'checked':'unchecked'}/>
+          <Text style={styles.item}>Century Tower</Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={newEngineeringBuildingToggle} status={list.newEngineeringBuilding?'checked':'unchecked'}/>
+          <Text style={styles.item}>New Engineering Building</Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={wertheimLabToggle} status={list.wertheimLab?'checked':'unchecked'}/>
+          <Text style={styles.item}>Herbert Wertheim Laboratory for Engineering Excellence</Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={marstonToggle} status={list.marston?'checked':'unchecked'}/>
+          <Text style={styles.item}>Marston Science Library</Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={libraryWestToggle} status={list.libraryWest?'checked':'unchecked'}/>
+          <Text style={styles.item}>Library West</Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20,}}>
+          <ToggleButton icon='check' onPress={miguelHomeToggle} status={list.miguelHome?'checked':'unchecked'}/>
+          <Text style={styles.item}>Miguel's House</Text>
+        </View>
+       </View>
+       <View style={{flex: 1}}>
+              <TouchableOpacity style={{flex: 1, borderRadius: 10, justifyContent: 'center', backgroundColor: '#00529b', marginLeft:5, marginRight: 5, marginTop: 5, marginBottom: 5}}
+                onPress={submitForm}>
+                <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Start Tour</Text>
+              </TouchableOpacity>
+      </View>
   </View>
   );
 };
@@ -255,9 +263,7 @@ const TourDescription = (props) => {
       </View>
       <View style={{flex: 1, justifyContent: 'center'}}>
           <TouchableOpacity style={{flex: 1, borderRadius: 10, justifyContent: 'center', backgroundColor: '#00529b', marginLeft:5, marginRight: 5, marginTop: 5, marginBottom: 5}} 
-            onPress={() => {
-              setSavedTour(tour.locations);
-              navigation.navigate('Map', {locations: tour.locations, setSavedTour: setSavedTour})}}>
+            onPress={() => navigation.navigate('Map', {locations: tour.locations, setSavedTour: setSavedTour})}>
             <Text style={{textAlign: 'center', fontSize: 18, color: '#fff'}}>Start Tour</Text>
           </TouchableOpacity>
         </View>

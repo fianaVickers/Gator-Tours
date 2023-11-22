@@ -1,23 +1,24 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { FontAwesome5 } from 'react-native-vector-icons';
-import Constants from 'expo-constants';
+import { Text, View, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import * as Location from 'expo-location';
-import { showMessage} from "react-native-flash-message";
+import Geolocation from 'react-native-geolocation-service'; // Import the Geolocation library
+import { showMessage, positionStyle } from 'react-native-flash-message';
+//import Beacons from 'react-native-beacons-manager'
 var cogBotAPITypes = require('../chatbot/cogBotAPITypes.js').cogBotAPITypes;
 var cogAPIData = new cogBotAPITypes();
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyB4zAWniEADKjrMaXhd0N5-AuFGuoK4QAE';
 const DEFAULT_LATITUDE = 29.6436; // Approximate latitude for the University of Florida
 const DEFAULT_LONGITUDE = -82.3478; // Approximate longitude for the University of Florida
+const YOUR_GIMBAL_BEACON_UUID = '11111111-2222-3333-4444-555555555557';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: 50,
     backgroundColor: '#ecf0f1',
     paddingTop: 5,
     marginBottom: 15
@@ -50,8 +51,8 @@ const styles = StyleSheet.create({
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    right: 20,
-    bottom: 55,
+    right: 25,
+    bottom: 10,
   },
   floatingButtonStyle: {
     resizeMode: 'contain',
@@ -62,8 +63,72 @@ const styles = StyleSheet.create({
     padding: 1,
   },
 });
+function sendRequestToApi(message){
+  return fetch(cogAPIData.CogbotURL,
+  {
+    method: cogAPIData.POSTstr,
+    headers: {
+      'Content-Type': cogAPIData.hdrContentValue,
+       'Accept': cogAPIData.hdrAcceptValue,
+      'Authorization': cogAPIData.hrdAuthValue,
+    },
+    body: JSON.stringify(
+      {
+          "input" : {"text" : message}
+      }
+    ),
+  })
+  .then((response) => response.json())
+  .then((responseData) => {
+    return responseData;
+  })
+  .catch(error => console.warn(error));
+}
+
+function tagsPresent(apiStr){
+  var startIndex = 0
+  var endIndex = 0 
+  var hasTags = false
+  
+  for (let i = 0; i < apiStr.length; i++){
+      
+      var currChar = apiStr.charAt(i)
+      if (currChar == "<"){
+        startIndex = i
+        continue 
+      }else if (currChar == ">"){
+        hasTags = true
+        break 
+      }
+  }
+  return hasTags
+}
+
+
+function formatResults(resultObj){
+  let formatedResStr = "Title: " + resultObj.title 
+  formatedResStr = formatedResStr + "\n" + "Summary: "+ resultObj.overview 
+  formatedResStr = formatedResStr + "\n" + "click link for more information: "+ resultObj.url +"\n"
+  return formatedResStr
+}
+
+function retrieveLink(apiRes){
+
+  linkStr = "a href="
+    if (apiRes.includes("a href=")){
+      index = apiRes.indexOf(linkStr)
+      index = index+linkStr.length+1
+      console.log(index + " char at index: " + apiRes.charAt(index))
+      indexLinkEnd = apiRes.indexOf("\"", index)
+      console.log(indexLinkEnd + " char at index: " + apiRes.charAt(indexLinkEnd))
+      console.log(apiRes.substring(index, indexLinkEnd))
+      return apiRes.substring(index, indexLinkEnd)
+    }
+
+}
 
 const MapComp = ({ route, navigation }) => {
+  const [locationSubscription, setLocationSubscription] = useState(null);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [heading, setHeading] = useState(null);
@@ -79,51 +144,130 @@ const MapComp = ({ route, navigation }) => {
   const [destinations, setDestinations] = useState(locations);
   const [currentNotVisitedIndex, setCurrentNotVisitedIndex] = useState(0);
   const [locationName, setLocationName] = useState(destinations[currentLocationIndex]?.name || 'No Name'); // Add locationName state
+  // const [beaconInRange, setBeaconInRange] = useState(false); // Beacon proximity status
+  // const [beaconId, setBeaconId] = useState(null); // Store beacon information
 
 
+  // // Function to process Gimbal beacon sightings
+  // const processGimbalBeaconSighting = (beaconData) => {
+  //   // Extract Gimbal beacon data
+  //   const beaconUUID = beaconData.iBeacon.uuid;
+  //   const beaconMajor = beaconData.iBeacon.major;
+  //   const beaconMinor = beaconData.iBeacon.minor;
 
+  //   // Perform actions based on Gimbal beacon data
+  //   console.log(`Sighted Gimbal beacon - UUID: ${beaconUUID}, Major: ${beaconMajor}, Minor: ${beaconMinor}`);
 
-  useEffect(() => {
-    const requestLocation = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
+  //   // You can add your own logic here to respond to the Gimbal beacon sighting.
+  // };
+
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Geolocation Permission',
+          message: 'To use this application, enable location services.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === 'granted') {
+        console.log('granted');
+        return true;
+      } else {
+        console.log('not granted');
+        return false;
       }
-  
-      const locationSubscription = await Location.watchPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 1000,
-        distanceInterval: 1,
-      }, (newLocation) => {
-        if (newLocation && newLocation.coords) {
-          setLocation(newLocation); // Update location state with the new location
-          setOriginLocation(newLocation.coords); // Update origin location state
-          // console.log('New location received:', newLocation); 
-        }
-      });
-  
-      // Watch the device's heading (orientation)
-      const headingSubscription = await Location.watchHeadingAsync((heading) => {
-        // Update the heading state with the magnetic heading
-        setHeading(heading.magHeading);
-      });
-  
-      setDestinations(locations); // Add this line
-  
-      // Clean up location and heading subscriptions when the component unmounts
-      return () => {
-        if (locationSubscription) {
-          locationSubscription.remove();
-        }
-        if (headingSubscription) {
-          headingSubscription.remove();
-        }
-      };
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const watchPosition = () => {
+    if (requestLocationPermission) {
+      try {
+        const watchID = Geolocation.watchPosition(
+          (location) => {
+            setLocation(location);
+            setOriginLocation(location.coords);
+          },
+          (error) => console.log('WatchPosition Error', JSON.stringify(error)),
+          {enableHighAccuracy: true, distanceFilter: 0}
+        );
+        setLocationSubscription(watchID);
+      } catch (e) {
+        console.log('WatchPosition Error', JSON.stringify(e));
+      }      
+    }
+  };
+
+  const clearWatch = () => {
+    locationSubscription !== null && Geolocation.clearWatch(locationSubscription);
+    setLocationSubscription(null);
+    setLocation(null);
+  };
+
+  useEffect ( () => {
+    watchPosition();
+    return () => {
+      console.log('unmounted');
+      clearWatch();
     };
-  
-    requestLocation();
+  }, []);
+
+  useEffect( () => {
+    const updateDest = async () => {
+      setDestinations(locations);
+    };
+    updateDest();
   }, [locations]);
+  // // Use another useEffect for beacon handling
+  // useEffect(() => {
+  //   // Request authorization for beacons
+  //   Beacons.requestWhenInUseAuthorization();
+  
+  //   // Define the region for your Gimbal beacon
+  //   const region = {
+  //     identifier: 'GemTot for iOS',
+  //     uuid: GIMBAL_BEACON_UUID,
+  //   };
+  
+  //   // Range for your Gimbal beacon inside the region
+  //   Beacons.startRangingBeaconsInRegion(region);
+  
+  //   // Listen for beacon changes
+  //   const beaconsDidRange = DeviceEventEmitter.addListener(
+  //     'beaconsDidRange',
+  //     (data) => {
+  //       // Handle beacon data here
+  //       if (data.beacons.length > 0) {
+  //         // Beacon(s) detected
+  //         const beacon = data.beacons[0]; // Assuming you're only interested in the first beacon
+  //         setBeaconInRange(true);
+  //         setBeaconId(beacon.uuid);
+          
+  //          // Process Gimbal beacon sighting here
+  //          processGimbalBeaconSighting(beacon);
+  //       } else {
+  //         // No beacon detected
+  //         setBeaconInRange(false);
+  //         setBeaconId(null);
+  //       }
+  //     }
+  //   );
+  
+  //   // Clean up beacon-related subscriptions when the component unmounts
+  //   return () => {
+  //     // Stop beacon ranging
+  //     Beacons.stopRangingBeaconsInRegion(region);
+  
+  //     // Remove beacon event listener
+  //     beaconsDidRange.remove();
+  //   };
+  // }, []); // This useEffect should run once when the component mounts
+
 
   const onCenterMap = () => {
     mapViewRef.current.animateToRegion({
@@ -179,7 +323,6 @@ const MapComp = ({ route, navigation }) => {
                 avatar : 'https://cms.mc-cap1.cogability.net/uf/Alli-Gator-1.png',
               }
             }
-
             showMessage({
               message: "Check out this cool information I found about your latest tour stop!",
               description: messTemp.text + "\n\n"+ "press me and i'll be quite for a bit!",
@@ -212,7 +355,6 @@ const MapComp = ({ route, navigation }) => {
             }
   
             console.log("Message was: " + formatMsgTemplate)
-
             showMessage({
               message:"Check out this cool information I found about your latest tour stop!",
               description: formatMsgTemplate.text + "\n\n"+ "press me and i'll be quiet!",
@@ -233,7 +375,6 @@ const MapComp = ({ route, navigation }) => {
     } else {
       setLocationName('No Name');
     }
-
   };
 
   if (errorMsg) {
@@ -283,7 +424,7 @@ const MapComp = ({ route, navigation }) => {
     // Update the destinations state, not locations
     setDestinations(updatedDestinations);
 
-    //Update saved tour state
+    // Update saved tour state
     setSavedTour(updatedDestinations);
 
     // Update the locations using navigation.setOptions
@@ -400,6 +541,7 @@ const MapComp = ({ route, navigation }) => {
               origin={originLocation} // Use originLocation state
               destination={locations[currentLocationIndex]}
               apikey={GOOGLE_MAPS_API_KEY}
+              key={index}
               mode="WALKING"
               strokeWidth={3}
               strokeColor= {destination.visited ? 'green' : "blue"}
@@ -437,6 +579,18 @@ const MapComp = ({ route, navigation }) => {
             />            
           </View>
         </Marker>
+{/* 
+        {beaconInRange && (
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+            title="Gimbal Beacon"
+            description={`Beacon ID: ${beaconId}`}
+          />
+        )}
+ */}
 
       </MapView>
 
@@ -456,7 +610,7 @@ const MapComp = ({ route, navigation }) => {
         }}>Destination: {locationName}</Text>
     </View>
 
-      <View style={{ position: 'absolute', bottom: 130, right: 350 }}>
+      <View style={{ position: 'absolute', bottom: 80, right: 350 }}>
         <TouchableOpacity
           onPress={() =>
             mapViewRef.current.animateToRegion({
@@ -494,7 +648,7 @@ const MapComp = ({ route, navigation }) => {
 
       {!showAllDestinations && (
   <>
-    <View style={{ position: 'absolute', bottom: 185, left: 20 }}>
+    <View style={{ position: 'absolute', bottom: 135, left: 20 }}>
       <TouchableOpacity
         onPress={switchDestination}
         style={{
@@ -512,7 +666,7 @@ const MapComp = ({ route, navigation }) => {
       </TouchableOpacity>
     </View>
 
-    <View style={{ position: 'absolute', bottom: 80, left: 20 }}>
+    <View style={{ position: 'absolute', bottom: 30, left: 20 }}>
       <TouchableOpacity
         onPress={() => navigation.navigate('End Tour')}
         style={{
@@ -586,68 +740,3 @@ const MapComp = ({ route, navigation }) => {
 };
 
 export default MapComp;
-
-
-function sendRequestToApi(message){
-  return fetch(cogAPIData.CogbotURL,
-  {
-    method: cogAPIData.POSTstr,
-    headers: {
-      'Content-Type': cogAPIData.hdrContentValue,
-       'Accept': cogAPIData.hdrAcceptValue,
-      'Authorization': cogAPIData.hrdAuthValue,
-    },
-    body: JSON.stringify(
-      {
-          "input" : {"text" : message}
-      }
-    ),
-  })
-  .then((response) => response.json())
-  .then((responseData) => {
-    return responseData;
-  })
-  .catch(error => console.warn(error));
-}
-
-function tagsPresent(apiStr){
-  var startIndex = 0
-  var endIndex = 0 
-  var hasTags = false
-  
-  for (let i = 0; i < apiStr.length; i++){
-      
-      var currChar = apiStr.charAt(i)
-      if (currChar == "<"){
-        startIndex = i
-        continue 
-      }else if (currChar == ">"){
-        hasTags = true
-        break 
-      }
-  }
-  return hasTags
-}
-
-
-function formatResults(resultObj){
-  let formatedResStr = "Title: " + resultObj.title 
-  formatedResStr = formatedResStr + "\n" + "Summary: "+ resultObj.overview 
-  formatedResStr = formatedResStr + "\n" + "click link for more information: "+ resultObj.url +"\n"
-  return formatedResStr
-}
-
-function retrieveLink(apiRes){
-
-  linkStr = "a href="
-    if (apiRes.includes("a href=")){
-      index = apiRes.indexOf(linkStr)
-      index = index+linkStr.length+1
-      console.log(index + " char at index: " + apiRes.charAt(index))
-      indexLinkEnd = apiRes.indexOf("\"", index)
-      console.log(indexLinkEnd + " char at index: " + apiRes.charAt(indexLinkEnd))
-      console.log(apiRes.substring(index, indexLinkEnd))
-      return apiRes.substring(index, indexLinkEnd)
-    }
-
-}
