@@ -4,8 +4,37 @@ Gator Tours is a mobile application that utilizes the University of Florida’s 
 The mobile application acts as a virtual tour guide, similar to other virtual tours hosted on Zoom such as GoWithGuide and World Virtual Tours. However, both GoWithGuide and World Virtual Tours utilize zoom to host tours, and due to this limitation occur during predetermined times. However, Gator Tours provides a more convenient, hands-off approach to virtual tours. Gator Tours does not utilize any external face cam service to achieve its functionality and is available anytime at its user’s convenience. Gator Tour’s beacon interface is the application’s most distinguishing implementation. The application communicates with beacons scattered throughout the University of Florida’s campus; it provides information about a location on campus if a user is within a certain range from the beacon. 
 This application provides access to individuals who prefer a remote tour guide due to health implications or travel complications. Gator Tours’ main goal includes reducing the information gap that individuals without access to in-person virtual tours experience.
 
-## Gator Tour Development Environment set up for WSL UBUNTU
+## Building Gator Tours for Bare React Native (Android)
+(The following steps only work for Android devices)
+
+### 1. Navigate to the ./Tour directory in a new console
+
+### 2. Run the following command to install the required Node Modules
+```bash
+npm install
+```
+
+### 3. Start Metro to build JavaScript code and assets
+```bash
+npm start
+```
+
+### 4. Once the Metro logo is displayed, open Android Studio and launch any Android device
+Locally installed emulators can be found in the Device Manager.
+
+### 5. With the Android Emulator started, open a new console window and navigate to the ./Tour directory
+
+### 6. Run the following command to install the application on the Android Emulator
+```bash
+npm run android
+```
+
+### 7. The app should install on the device and be ready to use!
+If you are not prompted to enable location services, manually allow Gator Tour's location access through the settings app on your device.
+
+## DEPRECIATED: Gator Tour Development Environment set up for WSL UBUNTU
 (The following steps only work for WSL Ubuntu Development Environments!)
+Note: The current version of the application does not support Expo, so this section is only applicable to Pre-Production releases.
 
 ### Download and Install the appropriate dependencies for React Native
 installs the npm package manager
