@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     textAlign : "center",
     marginTop: 50,
     fontSize: 35,
-    fontWeight: 200,
+    fontWeight: '200',
   },
 
   subHeader: {
@@ -126,12 +126,7 @@ const EndTourScreen = ({ navigation }) => {
         <View> 
             <Image style={styles.logo} source={require('../images/LogoNoCutoff.png')}/>
         </View>
-        <ConfettiCannon
-        count={500}
-        origin={{x: -10, y: 0}}
-        autoStart={true}
-        ref={ref => (this.explosion = ref)}
-      />
+
         <Text style={styles.Header} onPress={() => spamConfetti()}>Congratulations!</Text>
         <Text style={styles.subHeader}>You Have Completed a Tour!</Text>
         <Text style={styles.subHeaderTwo}>Want to know more? Click the chat bot icon below and Alli can help!</Text>
@@ -152,23 +147,6 @@ const EndTourScreen = ({ navigation }) => {
               titleStyle={{ fontWeight: 'bold' }}
               onPress={() => navigation.navigate('Home')}
             />
-
-        <Button
-              title="Restart Tour"
-              buttonStyle={{
-                backgroundColor: 'rgba(237,125,49,1.0)',
-                borderWidth: 2,
-                borderColor: 'white',
-                borderRadius: 30,
-              }}
-              containerStyle={{
-                marginHorizontal: 80, 
-                marginBottom: 1, 
-                marginTop: 20 
-              }}
-              titleStyle={{ fontWeight: 'bold' }}
-              onPress={() => console.log('clicked restart tour')}
-            />
         </View>
 
         <TouchableOpacity
@@ -181,7 +159,12 @@ const EndTourScreen = ({ navigation }) => {
           />
         </TouchableOpacity>
 
-      
+        <ConfettiCannon
+        count={500}
+        origin={{x: -10, y: 0}}
+        autoStart={true}
+        ref={ref => (this.explosion = ref)}
+      />
     </View>
   );
 };

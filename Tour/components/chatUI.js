@@ -215,6 +215,16 @@ export default function RoomScreen() {
       onSend={messages => onSend(messages)}
       user={{ _id: 6 }}
       alwaysShowSend
+      renderinputtoolbar={(props)=> (
+        <view style={{ backgroundcolor: colors.lighterblue, height: 200 }}>
+            <view style={styles.inputcontainer}>
+                <leftaction {...props} />
+                <chatinput {...props} />
+                <sendbutton {...props} />
+            </view>
+            <view></view>
+        </view>
+    )}
     />
   );
 }
